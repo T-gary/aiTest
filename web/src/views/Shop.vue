@@ -149,35 +149,54 @@ onBeforeUnmount(() => clearInterval(timer))
         </div>
       </section>
 
-      <aside class="cartside">
-        <div class="carthead">
-          <span>购物车</span>
-          <em>{{ cart.count.value }}</em>
-        </div>
-        <div class="cartbody">
-          <p v-if="!cart.items.value.length" class="muted small">还没加购商品</p>
-          <div v-for="i in cart.items.value" :key="i.id" class="cartitem">
-            <img v-if="i.image_url" :src="i.image_url" :alt="i.name" />
-            <div class="cartinfo">
-              <div class="cname">{{ i.name }}</div>
-              <div class="muted small">¥{{ i.price.toFixed(2) }}</div>
-              <div class="qty">
-                <button class="ghost" @click="cart.setQty(i.id, i.qty - 1)">−</button>
-                <span>{{ i.qty }}</span>
-                <button class="ghost" @click="cart.setQty(i.id, i.qty + 1)">+</button>
-                <button class="link" @click="cart.remove(i.id)">删除</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="cartfoot">
-          <div class="row" style="justify-content: space-between">
-            <span class="muted">合计</span>
-            <span class="price">¥{{ cart.total.value.toFixed(2) }}</span>
-          </div>
-          <button v-if="cart.items.value.length" class="ghost" style="width: 100%" @click="cart.clear()">清空</button>
-          <p class="muted small" style="margin: 8px 0 0">仅展示，不支持下单支付</p>
-        </div>
+      <aside class="rail">
+        <RouterLink to="/checkout" class="railitem" title="购物车">
+          <span class="railicon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 4h2.2l2 10.5h10.2L20 7H6.1" />
+              <circle cx="9.5" cy="19" r="1.6" />
+              <circle cx="17" cy="19" r="1.6" />
+            </svg>
+            <em v-if="cart.count.value" class="badge">{{ cart.count.value > 99 ? '99+' : cart.count.value }}</em>
+          </span>
+          <span class="raillabel">购物车</span>
+        </RouterLink>
+        <span class="railitem off">
+          <span class="railicon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M8.5 13.5c1 1.4 2.3 1.4 3.5 1.4s2.5 0 3.5-1.4" /></svg>
+          </span>
+          <span class="raillabel">我的</span>
+        </span>
+        <span class="railitem off">
+          <span class="railicon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13a7 7 0 0 1 14 0" /><rect x="3" y="13" width="3.5" height="5.5" rx="1.7" /><rect x="17.5" y="13" width="3.5" height="5.5" rx="1.7" /><path d="M19.2 18.5c0 1.6-1.6 2.5-3.7 2.5" /></svg>
+          </span>
+          <span class="raillabel">客服</span>
+        </span>
+        <span class="railitem off">
+          <span class="railicon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="12" rx="1.5" /><path d="M9 20h6M12 16.5V20" /></svg>
+          </span>
+          <span class="raillabel">桌面版</span>
+        </span>
+        <span class="railitem off">
+          <span class="railicon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v3.5h3.5V14a2 2 0 1 1 0 4v2H8v-2.5a2 2 0 1 1 0-4V4z" /></svg>
+          </span>
+          <span class="raillabel">插件版</span>
+        </span>
+        <span class="railitem off">
+          <span class="railicon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2" /><path d="M7.5 15.5l5-5 2.5 2.5-5 5H7.5v-2.5z" /></svg>
+          </span>
+          <span class="raillabel">反馈</span>
+        </span>
+        <span class="railitem off">
+          <span class="railicon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="2" /><path d="M8 8.5h8M8 12.5h8M8 16.5h5" /></svg>
+          </span>
+          <span class="raillabel">调研</span>
+        </span>
       </aside>
     </div>
   </div>

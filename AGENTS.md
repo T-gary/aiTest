@@ -23,7 +23,8 @@ pj/
     src/main.rs     全部路由 + 建表 + 初始管理员
     Cargo.toml
   web/              Vue3 前端
-    src/views/Shop.vue    前台：顶部搜索 + 左分类 / 中轮播+列表 / 右购物车
+    src/views/Shop.vue    前台：顶部搜索 + 左分类 / 中轮播+列表 / 右悬浮工具栏
+    src/views/Checkout.vue 结算页：购物车明细 + 合计
     src/cart.js           购物车（localStorage，纯前端）
     src/views/Login.vue   登录 / 注册（注册需审核）
     src/views/Admin.vue   后台：看板 / 商品录入 / 账号审核
@@ -37,8 +38,8 @@ pj/
 - 注册默认 `pending`，管理员审核为 `approved` 后才能登录。
 - 商品字段：name / price / image_url（只存外链）/ description / category / featured / created_by / created_at。
 - 价格按「分」存（`price_cents`），避免浮点误差。
-- 前台首页（v0.2.0 起）仿京东三栏：左分类（由商品自动汇总）、中轮播 + 纵向列表、右购物车侧栏，顶部搜索。
-- 购物车**纯前端**（localStorage），不落库、不下单支付。
+- 前台首页（v0.2.0 起）仿京东三栏：左分类（由商品自动汇总）、中轮播 + 纵向列表、右悬浮工具栏，顶部搜索。
+- 购物车**纯前端**（localStorage），不落库、不下单支付；首页右侧工具栏购物车项带件数角标，点击进 `/checkout`。
 - `featured` 标记的商品进首页轮播；管理员可切换。
 - 看板指标：商品总数、账号总数、累计登录次数、每个账号登录次数/最近登录/上架产品数、最近 50 条登录记录。
 - 初始管理员：`admin / 123456`（首次启动自动创建，请尽快改密）。
