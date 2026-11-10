@@ -116,7 +116,7 @@ body {
 
 .banner-card { position: relative; z-index: 1; color: #fff; max-width: 60%; display: flex; flex-direction: column; gap: 8px; }
 .banner-tag { align-self: flex-start; background: #fff; color: var(--jd); font-size: 12px; padding: 2px 8px; border-radius: 4px; }
-.banner-name { font-size: 24px; font-weight: 700; }
+.banner-name { font-size: 22px; font-weight: 700; }
 .banner-desc { font-size: 13px; opacity: .9; line-height: 1.5; }
 .banner-price { font-size: 22px; font-weight: 700; }
 .banner-empty { color: #fff; font-size: 14px; position: relative; z-index: 1; }
