@@ -16,7 +16,7 @@ const pages = ref(1)
 const total = ref(0)
 const pageSize = 12
 
-const form = ref({ name: '', price: '', image_url: '', description: '' })
+const form = ref({ name: '', price: '', category: '', image_url: '', description: '', featured: false })
 const busy = ref(false)
 
 const tabs = computed(() => {
@@ -64,12 +64,14 @@ async function submitProduct() {
       body: JSON.stringify({
         name: form.value.name,
         price: Number(form.value.price),
+        category: form.value.category,
         image_url: form.value.image_url,
-        description: form.value.description
+        description: form.value.description,
+        featured: form.value.featured
       })
     })
     message.value = '商品已上架'
-    form.value = { name: '', price: '', image_url: '', description: '' }
+    form.value = { name: '', price: '', category: '', image_url: '', description: '', featured: false }
     page.value = 1
     await loadProducts()
   } catch (e) {
@@ -83,6 +85,15 @@ async function removeProduct(p) {
   if (!confirm(`删除商品「${p.name}」？`)) return
   try {
     await api(`/products/${p.id}`, { method: 'DELETE' })
+    await loadProducts()
+  } catch (e) {
+    fail(e)
+  }
+}
+
+async function toggleFeatured(p) {
+  try {
+    await api(`/admin/products/${p.id}/featured`, { method: 'POST' })
     await loadProducts()
   } catch (e) {
     fail(e)
@@ -170,6 +181,13 @@ onMounted(() => {
           <input v-model="form.name" placeholder="商品名称" style="flex: 1; min-width: 160px" />
           <input v-model="form.price" type="number" min="0" step="0.01" placeholder="价格" style="width: 130px" />
         </div>
+        <div class="row">
+          <input v-model="form.category" placeholder="分类（如 数码 / 家电，可留空）" style="flex: 1; min-width: 160px" />
+          <label class="row muted" style="gap: 6px; font-size: 13px">
+            <input v-model="form.featured" type="checkbox" style="width: auto" />
+            首页轮播
+          </label>
+        </div>
         <input v-model="form.image_url" placeholder="图片外链 URL（可留空）" />
         <textarea v-model="form.description" placeholder="商品描述"></textarea>
         <div class="row">
@@ -183,12 +201,19 @@ onMounted(() => {
         <p v-if="!products.length" class="muted">还没有商品</p>
         <table v-else>
           <thead>
-            <tr><th>名称</th><th>价格</th><th>录入人</th><th>时间</th><th></th></tr>
+            <tr><th>名称</th><th>价格</th><th>分类</th><th>轮播</th><th>录入人</th><th>时间</th><th></th></tr>
           </thead>
           <tbody>
             <tr v-for="p in products" :key="p.id">
               <td>{{ p.name }}</td>
               <td>¥{{ p.price.toFixed(2) }}</td>
+              <td>{{ p.category || '—' }}</td>
+              <td>
+                <button v-if="user?.is_admin" class="link" @click="toggleFeatured(p)">
+                  {{ p.featured ? '已上轮播' : '未上轮播' }}
+                </button>
+                <span v-else>{{ p.featured ? '是' : '否' }}</span>
+              </td>
               <td>{{ p.created_by }}</td>
               <td>{{ p.created_at }}</td>
               <td>

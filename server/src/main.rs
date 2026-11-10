@@ -141,6 +141,19 @@ async fn login(State(a): State<App>, Json(c): Json<Credentials>) -> Ok<Json<Logi
     }))
 }
 
+#[derive(sqlx::FromRow)]
+struct ProductRow {
+    id: i64,
+    name: String,
+    price_cents: i64,
+    image_url: String,
+    description: String,
+    category: String,
+    featured: i8,
+    created_by: Option<String>,
+    created_at: String,
+}
+
 #[derive(Serialize)]
 struct Product {
     id: i64,
@@ -148,56 +161,91 @@ struct Product {
     price: f64,
     image_url: String,
     description: String,
+    category: String,
+    featured: bool,
     created_by: String,
     created_at: String,
+}
+
+impl From<ProductRow> for Product {
+    fn from(r: ProductRow) -> Self {
+        Product {
+            id: r.id,
+            name: r.name,
+            price: r.price_cents as f64 / 100.0,
+            image_url: r.image_url,
+            description: r.description,
+            category: r.category,
+            featured: r.featured != 0,
+            created_by: r.created_by.unwrap_or_default(),
+            created_at: r.created_at,
+        }
+    }
 }
 
 #[derive(Deserialize)]
 struct Page {
     page: Option<u32>,
     q: Option<String>,
+    category: Option<String>,
+    featured: Option<u8>,
+    size: Option<u32>,
 }
 
-const PRODUCT_SELECT: &str = "SELECT p.id, p.name, p.price_cents, p.image_url, p.description, u.username, DATE_FORMAT(p.created_at, '%Y-%m-%d %H:%i')
+const PRODUCT_SELECT: &str = "SELECT p.id, p.name, p.price_cents, p.image_url, p.description, p.category, p.featured,
+        u.username AS created_by, DATE_FORMAT(p.created_at, '%Y-%m-%d %H:%i') AS created_at
      FROM products p LEFT JOIN users u ON u.id = p.created_by";
 
-fn to_product(row: (i64, String, i64, String, String, Option<String>, String)) -> Product {
-    Product {
-        id: row.0,
-        name: row.1,
-        price: row.2 as f64 / 100.0,
-        image_url: row.3,
-        description: row.4,
-        created_by: row.5.unwrap_or_default(),
-        created_at: row.6,
-    }
-}
+const PRODUCT_FILTER: &str =
+    "WHERE (? = '' OR p.name LIKE ?) AND (? = '' OR p.category = ?) AND (? = 0 OR p.featured = 1)";
 
 async fn list_products(State(a): State<App>, Query(p): Query<Page>) -> Ok<Json<serde_json::Value>> {
     let page = p.page.unwrap_or(1).max(1);
-    let size = 12u32;
+    let size = p.size.unwrap_or(12).clamp(1, 60);
     let q = p.q.unwrap_or_default();
-    let like = format!("%{}%", q.trim());
-    let total: i64 = sqlx::query_scalar(
-        "SELECT COUNT(*) FROM products p WHERE ? = '' OR p.name LIKE ?",
-    )
-    .bind(q.trim())
-    .bind(&like)
-    .fetch_one(&a.db)
-    .await?;
-    let sql = format!("{PRODUCT_SELECT} WHERE ? = '' OR p.name LIKE ? ORDER BY p.id DESC LIMIT ? OFFSET ?");
-    let rows: Vec<(i64, String, i64, String, String, Option<String>, String)> = sqlx::query_as(&sql)
-        .bind(q.trim())
+    let q = q.trim();
+    let like = format!("%{q}%");
+    let category = p.category.unwrap_or_default();
+    let featured = p.featured.unwrap_or(0);
+
+    let total: i64 = sqlx::query_scalar(&format!("SELECT COUNT(*) FROM products p {PRODUCT_FILTER}"))
+        .bind(q)
         .bind(&like)
+        .bind(&category)
+        .bind(&category)
+        .bind(featured)
+        .fetch_one(&a.db)
+        .await?;
+
+    let sql = format!("{PRODUCT_SELECT} {PRODUCT_FILTER} ORDER BY p.id DESC LIMIT ? OFFSET ?");
+    let rows: Vec<ProductRow> = sqlx::query_as(&sql)
+        .bind(q)
+        .bind(&like)
+        .bind(&category)
+        .bind(&category)
+        .bind(featured)
         .bind(size)
         .bind((page - 1) * size)
         .fetch_all(&a.db)
         .await?;
+
     Ok(Json(json!({
         "total": total,
         "page": page,
         "size": size,
-        "items": rows.into_iter().map(to_product).collect::<Vec<_>>(),
+        "items": rows.into_iter().map(Product::from).collect::<Vec<_>>(),
+    })))
+}
+
+async fn categories(State(a): State<App>) -> Ok<Json<serde_json::Value>> {
+    let rows: Vec<(String, i64)> = sqlx::query_as(
+        "SELECT category, COUNT(*) FROM products WHERE category <> ''
+         GROUP BY category ORDER BY COUNT(*) DESC, category",
+    )
+    .fetch_all(&a.db)
+    .await?;
+    Ok(Json(json!({
+        "items": rows.iter().map(|(c, n)| json!({ "name": c, "count": n })).collect::<Vec<_>>(),
     })))
 }
 
@@ -207,6 +255,8 @@ struct ProductInput {
     price: f64,
     image_url: Option<String>,
     description: Option<String>,
+    category: Option<String>,
+    featured: Option<bool>,
 }
 
 fn check_product(p: &ProductInput) -> Ok<i64> {
@@ -227,17 +277,40 @@ async fn create_product(
 ) -> Ok<Json<serde_json::Value>> {
     let c = claims(&a, &headers)?;
     let cents = check_product(&p)?;
+    let category = p.category.unwrap_or_default().trim().to_string();
+    if category.len() > 30 {
+        return Err(bad("分类最多 30 个字符"));
+    }
     let r = sqlx::query(
-        "INSERT INTO products (name, price_cents, image_url, description, created_by) VALUES (?, ?, ?, ?, ?)",
+        "INSERT INTO products (name, price_cents, image_url, description, category, featured, created_by)
+         VALUES (?, ?, ?, ?, ?, ?, ?)",
     )
     .bind(p.name.trim())
     .bind(cents)
     .bind(p.image_url.unwrap_or_default())
     .bind(p.description.unwrap_or_default())
+    .bind(&category)
+    .bind(p.featured.unwrap_or(false) as i8)
     .bind(c.uid)
     .execute(&a.db)
     .await?;
     Ok(Json(json!({ "ok": true, "id": r.last_insert_id() })))
+}
+
+async fn toggle_featured(
+    State(a): State<App>,
+    headers: HeaderMap,
+    Path(id): Path<i64>,
+) -> Ok<Json<serde_json::Value>> {
+    admin(&a, &headers)?;
+    let r = sqlx::query("UPDATE products SET featured = 1 - featured WHERE id = ?")
+        .bind(id)
+        .execute(&a.db)
+        .await?;
+    if r.rows_affected() == 0 {
+        return Err(ApiError(StatusCode::NOT_FOUND, "商品不存在".into()));
+    }
+    Ok(Json(json!({ "ok": true })))
 }
 
 async fn delete_product(
@@ -350,8 +423,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/login", post(login))
         .route("/me", get(me))
         .route("/products", get(list_products).post(create_product))
+        .route("/categories", get(categories))
         .route("/products/{id}", delete(delete_product))
         .route("/admin/stats", get(stats))
+        .route("/admin/products/{id}/featured", post(toggle_featured))
         .route("/admin/accounts/{id}/approve", post(approve_account))
         .with_state(app);
 
@@ -388,6 +463,8 @@ async fn migrate(db: &MySqlPool) -> Result<(), sqlx::Error> {
             price_cents BIGINT NOT NULL DEFAULT 0,
             image_url VARCHAR(500) NOT NULL DEFAULT '',
             description TEXT NOT NULL,
+            category VARCHAR(30) NOT NULL DEFAULT '',
+            featured TINYINT NOT NULL DEFAULT 0,
             created_by BIGINT NOT NULL,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             INDEX idx_created_by (created_by),
@@ -396,6 +473,17 @@ async fn migrate(db: &MySqlPool) -> Result<(), sqlx::Error> {
     )
     .execute(db)
     .await?;
+    // 旧库补列：1060 = Duplicate column name
+    for sql in [
+        "ALTER TABLE products ADD COLUMN category VARCHAR(30) NOT NULL DEFAULT ''",
+        "ALTER TABLE products ADD COLUMN featured TINYINT NOT NULL DEFAULT 0",
+    ] {
+        if let Err(e) = sqlx::query(sql).execute(db).await {
+            if !e.to_string().contains("Duplicate column") {
+                return Err(e);
+            }
+        }
+    }
     sqlx::query(
         "CREATE TABLE IF NOT EXISTS login_logs (
             id BIGINT PRIMARY KEY AUTO_INCREMENT,
