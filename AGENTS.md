@@ -12,7 +12,8 @@
 ## 服务器
 
 - 应用 + MySQL 同机：`192.168.1.1`，root / 123456（生产环境请改）。
-- SSH 22 端口在本机不通，部署用人工 `scp`/`rsync`。
+- 本机 192.168.1.1:22 不通，**代码走 GitHub**：`git@github.com:T-gary/aiTest.git`（分支 `main`）。
+  本地仓库 `D:\OpenCode\pj` 已配置 origin 并可直接 `git push`。
 
 ## 结构
 

@@ -91,21 +91,41 @@ node smoke.mjs
 
 目标：服务器 `192.168.1.1`，目录 `/home/chengzhen/桌面/教学/project/1/pj`。
 
+代码托管在 GitHub：`git@github.com:T-gary/aiTest.git`（分支 `main`）。服务器上拉取：
+
 ```bash
-# 本机构建后上传（在 D:\OpenCode\pj 下）
-scp -r web/dist server deploy root@192.168.1.1:/home/chengzhen/桌面/教学/project/1/pj/
+git clone git@github.com:T-gary/aiTest.git /home/chengzhen/桌面/教学/project/1/pj
 ```
 
-服务器上安装 Rust 工具链后 `cargo build --release`，或直接上传交叉编译好的二进制。启动：
+本机改完推送：
+
+```bash
+git add -A && git commit -m "feat: ..." && git push
+```
+
+服务器首次构建：
+
+```bash
+cd /home/chengzhen/桌面/教学/project/1/pj
+
+# 前端
+cd web && npm ci && npm run build && cd ..
+
+# 后端
+cd server && cargo build --release && cd ..
+```
+
+启动：
 
 ```bash
 DATABASE_URL='mysql://root:123456@127.0.0.1:3306/pj_shop' \
 JWT_SECRET='请替换为随机串' \
 PORT=5050 \
+WEB_DIST=/home/chengzhen/桌面/教学/project/1/pj/web/dist \
 /home/chengzhen/桌面/教学/project/1/pj/server/target/release/pj-shop
 ```
 
-> 本机 192.168.1.1 的 22 端口当前不通，部署需走可用的 SSH 通道或人工拷贝。
+> 本机到 192.168.1.1 的 22 端口不通，因此用 Git 作为交付通道；`deploy/deploy.sh` 里的 scp 版本仅在 SSH 恢复后可用。
 
 ## 版本历史
 
