@@ -34,10 +34,10 @@ const showTop = ref(false)
 const liveTucked = ref(false)
 let liveTimer = 0
 
-// 直播播放器（B 站外链，点击浮层后弹层播放）
-const LIVE_BVID = 'BV1eM8p6cEv2'
+// 直播播放器（直链 MP4，点击浮层后弹层播放）
+const LIVE_SRC =
+  'https://sns-video-qc.xhscdn.com/stream/79/110/258/01eaefbcdc5db4e44f037001a1b87a4480_258.mp4?sign=f1b1287bd5498c9de1334e6ee54579a0&t=6af92b35'
 const liveOpen = ref(false)
-const liveUrl = `https://player.bilibili.com/player.html?bvid=${LIVE_BVID}&page=1&autoplay=1&danmaku=0`
 
 // 领奖浮层
 const prizeClosed = ref(localStorage.getItem('prizeClosed') === '1')
@@ -380,15 +380,9 @@ onBeforeUnmount(() => {
           <button class="link" @click="liveOpen = false">关闭</button>
         </header>
         <div class="m-live-player">
-          <iframe
-            :src="liveUrl"
-            title="限时秒杀直播"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowfullscreen
-            frameborder="0"
-          ></iframe>
+          <video :src="LIVE_SRC" controls autoplay muted playsinline preload="metadata"></video>
         </div>
-        <p class="muted small">视频来自 B 站 · {{ LIVE_BVID }}</p>
+        <p class="muted small">视频来自小红书 · 限时秒杀</p>
       </section>
     </div>
   </div>
