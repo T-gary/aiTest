@@ -36,6 +36,14 @@ function onKey(e) {
 window.addEventListener('keydown', onKey)
 onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 watch(mobileView, (v) => document.documentElement.classList.toggle('in-phone', v), { immediate: true })
+
+// 切换版本时跳到等价页面（桌面 /cart <-> 移动 /checkout，移动 /category 退出时回首页）
+const toMobileRoute = { '/cart': '/checkout' }
+const toDesktopRoute = { '/checkout': '/cart', '/category': '/' }
+watch(mobileView, (v) => {
+  const to = v ? toMobileRoute[route.path] : toDesktopRoute[route.path]
+  if (to) router.replace(to)
+})
 </script>
 
 <template>

@@ -52,6 +52,7 @@ pj/
 - PC 端（v0.2.2）：中间商品区独立滚动，左右两栏固定；商品用栅格 `auto-fill minmax(200px,1fr)`；每页 20 条。
 - 断点用**容器查询**（`.app { container-type: inline-size }`），不是视口媒体查询：这样同一套 CSS 既能服务真机，也能服务 390px 预览框。
 - 「移动版」按钮 = 手机预览（`viewmode.js` 存 localStorage），`Esc` 退出；真机 ≤500px 自动取消设备框。
+- 切换版本时跳到等价页面：`/cart` ↔ `/checkout`，移动版 `/category` 退出时回 `/`（`App.vue` 里 `toMobileRoute` / `toDesktopRoute`）。
 - 移动版首页参考墨刀「生鲜项目」原型：`m-head` / `m-service` / `m-cats` / `m-flash` / `plist` / `m-tabs`，桌面组件在容器查询里 `display:none`。
 - 消息页 `/messages` 参考京东消息页：红色头部 + 5 入口 + 筛选 + 列表 + 推荐栅格；未读数是 localStorage 演示值，没有后端消息表。
 - 购物车**纯前端**（localStorage），不落库、不下单支付；右侧全局工具栏购物车项带件数角标，点击进 `/cart`（桌面版）。
