@@ -890,10 +890,28 @@ th { color: var(--muted); font-weight: 500; }
   .mflow-col:nth-child(2) li:nth-child(3n) .pthumb,
   .mflow-col:nth-child(2) li:nth-child(3n) .thumb-ph { aspect-ratio: 3 / 4; }
   .pbody { padding: 8px 10px 10px; gap: 4px; }
-  .pname { font-size: 13px; line-height: 1.35; }
-  .pdesc { display: none; }
+  .pname {
+    font-size: 13px;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  /* 第二行：简介，单行截断 */
+  .pdesc {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--muted);
+    min-height: 17px;
+  }
   .pbody .muted.small { display: none; }
   .pbody .chip { display: none; }
+  .pbody .row { display: none; }
   .pfoot { flex-direction: row; align-items: center; justify-content: space-between; gap: 6px; padding-top: 2px; }
   .pfoot button {
     width: 26px;
@@ -918,15 +936,16 @@ th { color: var(--muted); font-weight: 500; }
 
   .pager { justify-content: center; margin: 12px 0 4px; }
 
-  /* 立即领奖浮层 */
+  /* 立即领奖浮层（放在回到顶部按钮上方，避免重叠） */
   .m-prize {
     display: block;
     position: fixed;
     right: 10px;
-    bottom: 64px;
+    bottom: 128px;
     z-index: 27;
     text-align: center;
-  }  .m-prize-main {
+  }
+  .m-prize-main {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1418,7 +1437,7 @@ th { color: var(--muted); font-weight: 500; }
 .stage.phone .m-prize {
   position: absolute;
   right: 10px;
-  bottom: 64px;
+  bottom: 128px;
 }
 
 /* 手机预览框内：回到顶部相对设备框定位 */
