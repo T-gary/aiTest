@@ -13,12 +13,13 @@ const filters = [
 const chips = ['国家补贴', '惊喜红包', '降价', '多买多返', '分组']
 
 const checkedCount = computed(() => cart.checkedCount.value)
+const checkedPieces = computed(() => cart.checkedPieces.value)
 </script>
 
 <template>
   <div class="cartpage">
     <header class="cart-head">
-      <div class="cart-title">购物车 <em>({{ cart.count.value }})</em></div>
+      <div class="cart-title">购物车 <em>({{ cart.kinds.value }})</em></div>
       <div class="cart-addr">朝阳区慧谷阳光100号楼</div>
       <div class="cart-actions">
         <button>对比</button>
@@ -100,7 +101,7 @@ const checkedCount = computed(() => cart.checkedCount.value)
           <span class="muted small">合计</span>
           <span class="price big">¥{{ cart.checkedTotal.value.toFixed(2) }}</span>
         </div>
-        <div class="muted small">已选 {{ checkedCount }} 件</div>
+        <div class="muted small">已选 {{ checkedPieces }} 件</div>
       </div>
       <button class="settle-btn" disabled title="演示项目，不支持下单支付">去结算({{ checkedCount }})</button>
     </div>
