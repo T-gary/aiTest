@@ -23,8 +23,10 @@ pj/
     src/main.rs     全部路由 + 建表 + 初始管理员
     Cargo.toml
   web/              Vue3 前端
-    src/views/Shop.vue    前台：顶部搜索 + 左分类 / 中轮播+列表 / 右悬浮工具栏
-    src/views/Checkout.vue 结算页：购物车明细 + 合计
+    src/views/Shop.vue    前台：顶部搜索 + 左分类 / 中轮播+列表
+    src/components/SideRail.vue 全局右侧悬浮工具栏（/admin 除外）
+    src/views/Checkout.vue 结算页：移动版购物车
+    src/views/Cart.vue    桌面版购物车（/cart）
     src/views/Messages.vue 消息页（移动版）
     src/views/Profile.vue  我的页（移动版个人中心）
     src/views/Category.vue 分类页（移动版）
@@ -45,13 +47,15 @@ pj/
 - 注册默认 `pending`，管理员审核为 `approved` 后才能登录。
 - 商品字段：name / price / image_url（只存外链）/ description / category / featured / created_by / created_at。
 - 价格按「分」存（`price_cents`），避免浮点误差。
-- 前台首页（v0.2.0 起）仿京东三栏：左分类（由商品自动汇总）、中轮播 + 格栅列表、右悬浮工具栏，顶部搜索。
+- 前台首页（v0.2.0 起）仿京东三栏：左分类（由商品自动汇总）、中轮播 + 格栅列表、右侧全局悬浮工具栏（`SideRail.vue`），顶部搜索。
+- 右侧工具栏在 `App.vue` 全局渲染，除 `/admin` 外所有页面显示；`.content.with-rail` 预留 84px 右内边距避免遮挡，手机预览与窄屏隐藏。
 - PC 端（v0.2.2）：中间商品区独立滚动，左右两栏固定；商品用栅格 `auto-fill minmax(200px,1fr)`；每页 20 条。
 - 断点用**容器查询**（`.app { container-type: inline-size }`），不是视口媒体查询：这样同一套 CSS 既能服务真机，也能服务 390px 预览框。
 - 「移动版」按钮 = 手机预览（`viewmode.js` 存 localStorage），`Esc` 退出；真机 ≤500px 自动取消设备框。
 - 移动版首页参考墨刀「生鲜项目」原型：`m-head` / `m-service` / `m-cats` / `m-flash` / `plist` / `m-tabs`，桌面组件在容器查询里 `display:none`。
 - 消息页 `/messages` 参考京东消息页：红色头部 + 5 入口 + 筛选 + 列表 + 推荐栅格；未读数是 localStorage 演示值，没有后端消息表。
-- 购物车**纯前端**（localStorage），不落库、不下单支付；首页右侧工具栏购物车项带件数角标，点击进 `/checkout`。
+- 购物车**纯前端**（localStorage），不落库、不下单支付；右侧全局工具栏购物车项带件数角标，点击进 `/cart`（桌面版）。
+- 桌面购物车 `/cart` 与移动购物车 `/checkout` 是**两个页面**，共用同一份 localStorage；移动版底部 tab 指向 `/checkout`，桌面工具栏指向 `/cart`。
 - 购物车勾选状态也存 localStorage（每项 `checked` 字段），合计/结算数只算勾选项。
 - `featured` 标记的商品进首页轮播；管理员可切换。
 - 看板指标：商品总数、账号总数、累计登录次数、每个账号登录次数/最近登录/上架产品数、最近 50 条登录记录。

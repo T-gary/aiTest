@@ -305,7 +305,7 @@ const oldPrice = computed(() => (p.value ? (p.value.price * 1.3).toFixed(2) : '0
 
             <div class="dt-pc-actions">
               <button class="dt-pc-cart" @click="addToCart">加入购物车</button>
-              <button class="dt-pc-buy" @click="buyNow">立即购买</button>
+              <button class="dt-pc-buybtn" @click="buyNow">立即购买</button>
             </div>
           </aside>
         </div>

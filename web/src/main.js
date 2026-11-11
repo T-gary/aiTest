@@ -9,6 +9,7 @@ import Messages from './views/Messages.vue'
 import Profile from './views/Profile.vue'
 import Category from './views/Category.vue'
 import Detail from './views/Detail.vue'
+import Cart from './views/Cart.vue'
 import './style.css'
 
 const router = createRouter({
@@ -21,7 +22,8 @@ const router = createRouter({
     { path: '/messages', component: Messages },
     { path: '/profile', component: Profile },
     { path: '/category', component: Category },
-    { path: '/product/:id', component: Detail }
+    { path: '/product/:id', component: Detail },
+    { path: '/cart', component: Cart }
   ]
 })
 

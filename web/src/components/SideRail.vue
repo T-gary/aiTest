@@ -11,7 +11,7 @@ import { mobileView } from '../viewmode'
       </span>
       <span class="raillabel">首页</span>
     </RouterLink>
-    <RouterLink to="/checkout" class="railitem" title="购物车">
+    <RouterLink to="/cart" class="railitem" title="购物车">
       <span class="railicon">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M3 4h2.2l2 10.5h10.2L20 7H6.1" />
