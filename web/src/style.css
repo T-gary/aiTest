@@ -674,7 +674,7 @@ th { color: var(--muted); font-weight: 500; }
 }
 
 /* ---------- 移动版（容器 ≤760px） ---------- */
-.m-top, .m-search, .m-catbar, .m-flash, .m-tabs, .backtop, .m-prize, .m-live { display: none; }
+.m-top, .m-search, .m-catbar, .m-flash, .m-tabs, .backtop, .m-prize, .m-live, .mflow { display: none; }
 
 @container (max-width: 760px) {
   .hdr { padding: 0 10px; gap: 8px; height: 44px; }
@@ -850,28 +850,45 @@ th { color: var(--muted); font-weight: 500; }
   .listhead { margin: 10px 0 8px; }
   .listhead h1 { font-size: 15px; }
 
-  /* 商品瀑布流（两列） */
-  .plist {
-    display: block;
-    column-count: 2;
-    column-gap: 8px;
+  /* 商品瀑布流（两列，左右独立列，高度错落） */
+  .plist { display: none; }
+  .mflow {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
   }
-  .plist li {
-    display: inline-block;
-    width: 100%;
-    margin-bottom: 8px;
-    border: 0;
+  .mflow-col {
+    flex: 1 1 0;
+    min-width: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .mflow-col li {
+    display: flex;
+    flex-direction: column;
+    background: var(--panel);
     border-radius: 12px;
-    break-inside: avoid;
+    overflow: hidden;
   }
-  .pthumb, .plist .thumb-ph { border-radius: 0; }
-  /* 图片高度错落，形成瀑布效果 */
-  .plist li:nth-child(3n + 1) .pthumb,
-  .plist li:nth-child(3n + 1) .thumb-ph { aspect-ratio: 3 / 4; }
-  .plist li:nth-child(3n + 2) .pthumb,
-  .plist li:nth-child(3n + 2) .thumb-ph { aspect-ratio: 1 / 1; }
-  .plist li:nth-child(3n) .pthumb,
-  .plist li:nth-child(3n) .thumb-ph { aspect-ratio: 4 / 3; }
+  .pthumb, .thumb-ph { border-radius: 0; }
+  /* 每列前 3 个卡片的图高错落，形成瀑布效果 */
+  .mflow-col li:nth-child(3n + 1) .pthumb,
+  .mflow-col li:nth-child(3n + 1) .thumb-ph { aspect-ratio: 3 / 4; }
+  .mflow-col li:nth-child(3n + 2) .pthumb,
+  .mflow-col li:nth-child(3n + 2) .thumb-ph { aspect-ratio: 1 / 1; }
+  .mflow-col li:nth-child(3n) .pthumb,
+  .mflow-col li:nth-child(3n) .thumb-ph { aspect-ratio: 4 / 3; }
+  /* 右列错开一个位，避免两列横向对齐像表格 */
+  .mflow-col:nth-child(2) li:nth-child(3n + 1) .pthumb,
+  .mflow-col:nth-child(2) li:nth-child(3n + 1) .thumb-ph { aspect-ratio: 1 / 1; }
+  .mflow-col:nth-child(2) li:nth-child(3n + 2) .pthumb,
+  .mflow-col:nth-child(2) li:nth-child(3n + 2) .thumb-ph { aspect-ratio: 4 / 3; }
+  .mflow-col:nth-child(2) li:nth-child(3n) .pthumb,
+  .mflow-col:nth-child(2) li:nth-child(3n) .thumb-ph { aspect-ratio: 3 / 4; }
   .pbody { padding: 8px 10px 10px; gap: 4px; }
   .pname { font-size: 13px; line-height: 1.35; }
   .pdesc { display: none; }

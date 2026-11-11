@@ -4,6 +4,7 @@ import { api } from '../api'
 import { cart } from '../cart'
 import { mobileView } from '../viewmode'
 import MTabs from '../components/MTabs.vue'
+import ProductCard from '../components/ProductCard.vue'
 const items = ref([])
 const total = ref(0)
 const page = ref(1)
@@ -135,6 +136,10 @@ function go(p) {
 }
 
 const current = computed(() => featured.value[slide.value % (featured.value.length || 1)])
+
+// 移动版瀑布流：按顺序交替分配到左右两列
+const flowLeft = computed(() => items.value.filter((_, i) => i % 2 === 0))
+const flowRight = computed(() => items.value.filter((_, i) => i % 2 === 1))
 
 // 秒杀倒计时：整点结束，仅展示
 const now = ref(Date.now())
@@ -271,22 +276,23 @@ onBeforeUnmount(() => {
 
         <ul v-else class="plist">
           <li v-for="p in items" :key="p.id">
-            <img v-if="p.image_url" :src="p.image_url" :alt="p.name" class="pthumb" loading="lazy" />
-            <div v-else class="thumb-ph">暂无图片</div>
-            <div class="pbody">
-              <div class="pname">{{ p.name }}</div>
-              <div class="pdesc">{{ p.description }}</div>
-              <div class="row">
-                <span v-if="p.category" class="chip">{{ p.category }}</span>
-                <span class="muted small">{{ p.created_at }}</span>
-              </div>
-              <div class="pfoot">
-                <span class="price">¥{{ p.price.toFixed(2) }}</span>
-                <button @click="cart.add(p)">{{ cart.has(p.id) ? '再加一件' : '加入购物车' }}</button>
-              </div>
-            </div>
+            <ProductCard :p="p" />
           </li>
         </ul>
+
+        <!-- 移动版瀑布流：左右两列，按顺序交替填充，高度错落 -->
+        <div v-if="items.length" class="mflow">
+          <ul class="mflow-col">
+            <li v-for="p in flowLeft" :key="'l' + p.id">
+              <ProductCard :p="p" />
+            </li>
+          </ul>
+          <ul class="mflow-col">
+            <li v-for="p in flowRight" :key="'r' + p.id">
+              <ProductCard :p="p" />
+            </li>
+          </ul>
+        </div>
 
         <div v-if="pages > 1" class="pager">
           <button class="ghost" :disabled="page <= 1" @click="go(page - 1)">上一页</button>
