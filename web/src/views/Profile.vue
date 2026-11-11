@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth } from '../api'
 import { cart } from '../cart'
@@ -7,6 +7,7 @@ import MTabs from '../components/MTabs.vue'
 
 const router = useRouter()
 const user = computed(() => auth.user())
+const surveyOpen = ref(false)
 
 const stats = [
   { n: '16 张', t: '优惠券', tag: '快过期' },
@@ -195,5 +196,15 @@ function goOrder() {
     </section>
 
     <MTabs />
+
+    <!-- 参与调研浮层 -->
+    <button class="pf-survey" aria-label="参与调研" @click="surveyOpen = !surveyOpen">
+      <em>✦</em>
+      参与<br />调研
+    </button>
+    <div v-if="surveyOpen" class="pf-survey-note">
+      <span>暂无进行中的调研问卷</span>
+      <button class="link" @click="surveyOpen = false">知道了</button>
+    </div>
   </div>
 </template>

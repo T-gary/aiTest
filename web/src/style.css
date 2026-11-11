@@ -1497,6 +1497,45 @@ th { color: var(--muted); font-weight: 500; }
 .pf-link:last-child { border-bottom: 0; }
 .pf-link em { font-style: normal; color: var(--muted); }
 
+/* 参与调研浮层 */
+.pf-survey {
+  position: fixed;
+  right: 8px;
+  bottom: 34%;
+  z-index: 26;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: linear-gradient(160deg, #ff8fb1, #f5333f);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.25;
+  font-weight: 600;
+  border: 1px solid #ffd0da;
+  box-shadow: 0 4px 14px rgba(245, 51, 63, .3);
+}
+.pf-survey em { font-style: normal; font-size: 12px; color: #ffe6a8; }
+
+.pf-survey-note {
+  position: fixed;
+  right: 8px;
+  bottom: calc(34% + 64px);
+  z-index: 27;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(16, 24, 40, .82);
+  color: #fff;
+  font-size: 12px;
+  max-width: 200px;
+}
+.pf-survey-note button.link { color: #ffd98a; font-size: 12px; }
+
 /* ---------- 消息页（移动版） ---------- */
 .msgs {
   max-width: 480px;
@@ -1739,6 +1778,18 @@ th { color: var(--muted); font-weight: 500; }
   position: absolute;
   left: 10px;
   bottom: 64px;
+}
+
+/* 手机预览框内：参与调研浮层相对设备框定位 */
+.stage.phone .pf-survey {
+  position: absolute;
+  right: 8px;
+  bottom: 34%;
+}
+.stage.phone .pf-survey-note {
+  position: absolute;
+  right: 8px;
+  bottom: calc(34% + 64px);
 }
 
 /* 手机预览框内：立即领奖浮层相对设备框定位 */
