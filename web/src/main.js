@@ -8,6 +8,7 @@ import Checkout from './views/Checkout.vue'
 import Messages from './views/Messages.vue'
 import Profile from './views/Profile.vue'
 import Category from './views/Category.vue'
+import Detail from './views/Detail.vue'
 import './style.css'
 
 const router = createRouter({
@@ -19,7 +20,8 @@ const router = createRouter({
     { path: '/checkout', component: Checkout },
     { path: '/messages', component: Messages },
     { path: '/profile', component: Profile },
-    { path: '/category', component: Category }
+    { path: '/category', component: Category },
+    { path: '/product/:id', component: Detail }
   ]
 })
 

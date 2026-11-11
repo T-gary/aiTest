@@ -3,8 +3,15 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { api } from '../api'
 import { cart } from '../cart'
 import { mobileView } from '../viewmode'
+import { useRouter } from 'vue-router'
 import MTabs from '../components/MTabs.vue'
 import ProductCard from '../components/ProductCard.vue'
+
+const router = useRouter()
+
+function openDetail(p) {
+  router.push(`/product/${p.id}`)
+}
 const items = ref([])
 const total = ref(0)
 const page = ref(1)
@@ -257,7 +264,7 @@ onBeforeUnmount(() => {
             <span class="m-timer">仅剩 <em>{{ flashTime }}</em></span>
           </div>
           <div class="m-flash-row" @wheel.prevent="onFlashWheel">
-            <button v-for="f in featured" :key="f.id" class="m-flash-item" @click="cart.add(f)">
+            <button v-for="f in featured" :key="f.id" class="m-flash-item" @click="openDetail(f)">
               <img v-if="f.image_url" :src="f.image_url" :alt="f.name" loading="lazy" />
               <div v-else class="thumb-ph">暂无图片</div>
               <span class="m-flash-name">{{ f.name }}</span>
@@ -275,7 +282,7 @@ onBeforeUnmount(() => {
         <p v-else-if="!items.length" class="muted">暂无商品</p>
 
         <ul v-else class="plist">
-          <li v-for="p in items" :key="p.id">
+          <li v-for="p in items" :key="p.id" @click="openDetail(p)">
             <ProductCard :p="p" />
           </li>
         </ul>
@@ -283,12 +290,12 @@ onBeforeUnmount(() => {
         <!-- 移动版瀑布流：左右两列，按顺序交替填充，高度错落 -->
         <div v-if="items.length" class="mflow">
           <ul class="mflow-col">
-            <li v-for="p in flowLeft" :key="'l' + p.id">
+            <li v-for="p in flowLeft" :key="'l' + p.id" @click="openDetail(p)">
               <ProductCard :p="p" />
             </li>
           </ul>
           <ul class="mflow-col">
-            <li v-for="p in flowRight" :key="'r' + p.id">
+            <li v-for="p in flowRight" :key="'r' + p.id" @click="openDetail(p)">
               <ProductCard :p="p" />
             </li>
           </ul>

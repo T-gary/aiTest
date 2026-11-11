@@ -1549,6 +1549,237 @@ th { color: var(--muted); font-weight: 500; }
 }
 .pf-survey-note button.link { color: #ffd98a; font-size: 12px; }
 
+/* ---------- 商品详情页 ---------- */
+.detail {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #fff;
+  padding-bottom: 64px;
+}
+
+.dt-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #fff;
+  border-bottom: 1px solid #f2f3f5;
+}
+.dt-back {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background: none;
+  border: 0;
+  display: grid;
+  place-items: center;
+}
+.dt-back svg { width: 22px; height: 22px; fill: none; stroke: var(--text); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.dt-title { flex: 1; text-align: center; font-size: 16px; font-weight: 600; }
+.dt-actions { display: flex; align-items: center; gap: 8px; color: var(--text); }
+.dt-actions em { font-style: normal; font-size: 18px; letter-spacing: 1px; }
+.dt-actions i {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--text);
+  display: inline-block;
+  position: relative;
+}
+.dt-actions i::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--text);
+}
+
+.dt-err { padding: 20px 12px; text-align: center; }
+
+.dt-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding: 10px 0 0;
+  background: #fff;
+}
+.dt-tabs button {
+  position: relative;
+  background: none;
+  border: 0;
+  padding: 4px 0 10px;
+  font-size: 16px;
+  color: var(--text);
+}
+.dt-tabs button.on { color: #f5333f; font-weight: 600; }
+.dt-tabs button.on::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  transform: translateX(-50%);
+  width: 26px;
+  height: 3px;
+  border-radius: 2px;
+  background: #f5333f;
+}
+
+.dt-gallery { position: relative; background: #fff; }
+.dt-gallery img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; }
+.dt-noimg {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  background: #eef1f6;
+  color: var(--muted);
+  font-size: 13px;
+}
+.dt-index {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  background: rgba(16, 24, 40, .45);
+  color: #fff;
+  font-size: 11px;
+  border-radius: 10px;
+  padding: 2px 8px;
+}
+
+.dt-pricebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #e1251b;
+  color: #fff;
+  padding: 12px 14px;
+}
+.dt-price { font-size: 26px; font-weight: 700; }
+.dt-countdown { text-align: right; font-size: 11px; }
+.dt-countdown em {
+  display: block;
+  margin-top: 4px;
+  font-style: normal;
+  background: #fff;
+  color: #e1251b;
+  border-radius: 12px;
+  padding: 2px 10px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.dt-info { padding: 12px 14px; }
+.dt-name { margin: 0 0 8px; font-size: 17px; line-height: 1.4; }
+.dt-pickup { margin: 0 0 10px; font-size: 13px; color: var(--muted); }
+
+.dt-qty { display: flex; align-items: center; gap: 0; justify-content: flex-end; }
+.dt-qty button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background: #fff;
+  border: 1px solid #e6e8ec;
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1;
+  border-radius: 6px;
+}
+.dt-qty button:disabled { color: #c8ced8; }
+.dt-qty span { min-width: 40px; text-align: center; font-size: 15px; }
+
+.dt-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.dt-divider::before, .dt-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #eceef2;
+}
+.dt-divider span { position: relative; }
+.dt-divider span::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -22px;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 2px;
+  background: #f5333f;
+}
+
+.dt-desc { padding: 4px 14px 20px; font-size: 13px; color: #4a5361; line-height: 1.7; }
+
+.dt-rich { padding: 12px 0 20px; }
+.dt-rich-text { margin: 0; padding: 0 14px 12px; font-size: 13px; line-height: 1.7; color: #4a5361; }
+.dt-rich-img { width: 100%; display: block; }
+.dt-rich-meta { margin: 12px 14px 0; font-size: 12px; color: var(--muted); line-height: 1.8; }
+
+.dt-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px max(8px, env(safe-area-inset-bottom));
+  background: #fff;
+  border-top: 1px solid var(--line);
+  max-width: 480px;
+  margin: 0 auto;
+}
+.dt-bar-btn {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+  background: none;
+  border: 0;
+  font-size: 10px;
+  color: var(--text);
+}
+.dt-bar-btn svg { width: 20px; height: 20px; fill: none; stroke: #333; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.dt-bar-icon { position: relative; display: block; }
+.dt-bar-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: #f5333f;
+  color: #fff;
+  font-style: normal;
+  font-size: 10px;
+  line-height: 15px;
+  text-align: center;
+  font-weight: 600;
+}
+.dt-cart, .dt-buy {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 11px 0;
+  border-radius: 22px;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.dt-cart { background: #f7b53c; color: #fff; }
+.dt-buy { background: #f5333f; color: #fff; }
+
 /* ---------- 分类（Category）页 ---------- */
 .catpage {
   max-width: 480px;
@@ -1963,6 +2194,16 @@ th { color: var(--muted); font-weight: 500; }
   position: absolute;
   left: 10px;
   bottom: 64px;
+}
+
+/* 手机预览框内：详情页底栏贴设备框 */
+.stage.phone .dt-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: none;
+  width: auto;
 }
 
 /* 手机预览框内：参与调研浮层相对设备框定位 */

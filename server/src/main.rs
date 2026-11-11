@@ -251,6 +251,15 @@ async fn categories(State(a): State<App>) -> Ok<Json<serde_json::Value>> {
     })))
 }
 
+async fn get_product(State(a): State<App>, Path(id): Path<i64>) -> Ok<Json<serde_json::Value>> {
+    let row: Option<ProductRow> = sqlx::query_as(&format!("{PRODUCT_SELECT} WHERE p.id = ?"))
+        .bind(id)
+        .fetch_optional(&a.db)
+        .await?;
+    let p = row.ok_or(ApiError(StatusCode::NOT_FOUND, "商品不存在".into()))?;
+    Ok(Json(serde_json::to_value(Product::from(p)).unwrap_or_default()))
+}
+
 #[derive(Deserialize)]
 struct ProductInput {
     name: String,
@@ -426,7 +435,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/me", get(me))
         .route("/products", get(list_products).post(create_product))
         .route("/categories", get(categories))
-        .route("/products/{id}", delete(delete_product))
+        .route("/products/{id}", get(get_product).delete(delete_product))
         .route("/admin/stats", get(stats))
         .route("/admin/products/{id}/featured", post(toggle_featured))
         .route("/admin/accounts/{id}/approve", post(approve_account))

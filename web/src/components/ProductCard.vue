@@ -16,7 +16,7 @@ defineProps({ p: { type: Object, required: true } })
     </div>
     <div class="pfoot">
       <span class="price">¥{{ p.price.toFixed(2) }}</span>
-      <button @click="cart.add(p)">{{ cart.has(p.id) ? '再加一件' : '加入购物车' }}</button>
+      <button @click.stop="cart.add(p)">{{ cart.has(p.id) ? '再加一件' : '加入购物车' }}</button>
     </div>
   </div>
 </template>

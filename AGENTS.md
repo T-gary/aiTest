@@ -27,6 +27,8 @@ pj/
     src/views/Checkout.vue 结算页：购物车明细 + 合计
     src/views/Messages.vue 消息页（移动版）
     src/views/Profile.vue  我的页（移动版个人中心）
+    src/views/Category.vue 分类页（移动版）
+    src/views/Detail.vue   商品详情页（基本信息 / 图文详情）
     src/components/MTabs.vue 移动版底部导航（首页/分类/消息/购物车/我的）
     src/messages.js       消息未读数（localStorage 演示）
     src/cart.js           购物车（localStorage，纯前端）

@@ -111,7 +111,7 @@ onMounted(loadCategories)
         <p v-else-if="!items.length" class="muted cat-tip">该分类暂无商品</p>
 
         <ul v-else>
-          <li v-for="p in items" :key="p.id" class="cat-row">
+          <li v-for="p in items" :key="p.id" class="cat-row" @click="router.push(`/product/${p.id}`)">
             <img v-if="p.image_url" :src="p.image_url" :alt="p.name" loading="lazy" />
             <div v-else class="cat-thumb-ph">无图</div>
             <div class="cat-info">
@@ -122,7 +122,7 @@ onMounted(loadCategories)
                   <div class="cat-price">¥{{ p.price.toFixed(2) }}</div>
                   <div class="cat-sold">{{ sold(p) }}w人已买</div>
                 </div>
-                <div class="cat-actions">
+                <div class="cat-actions" @click.stop>
                   <template v-if="count(p)">
                     <button class="cat-minus" @click="minus(p)">−</button>
                     <span class="cat-qty">{{ count(p) }}</span>
