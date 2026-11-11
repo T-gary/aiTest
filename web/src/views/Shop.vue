@@ -6,7 +6,7 @@ import { cart } from '../cart'
 const items = ref([])
 const total = ref(0)
 const page = ref(1)
-const size = ref(10)
+const size = ref(20)
 const pages = ref(1)
 const q = ref('')
 const category = ref('')
@@ -125,19 +125,19 @@ onBeforeUnmount(() => clearInterval(timer))
 
         <ul v-else class="plist">
           <li v-for="p in items" :key="p.id">
-            <img v-if="p.image_url" :src="p.image_url" :alt="p.name" loading="lazy" />
+            <img v-if="p.image_url" :src="p.image_url" :alt="p.name" class="pthumb" loading="lazy" />
             <div v-else class="thumb-ph">暂无图片</div>
-            <div class="pinfo">
+            <div class="pbody">
               <div class="pname">{{ p.name }}</div>
               <div class="pdesc">{{ p.description }}</div>
               <div class="row">
                 <span v-if="p.category" class="chip">{{ p.category }}</span>
                 <span class="muted small">{{ p.created_at }}</span>
               </div>
-            </div>
-            <div class="pbuy">
-              <span class="price">¥{{ p.price.toFixed(2) }}</span>
-              <button @click="cart.add(p)">{{ cart.has(p.id) ? '再加一件' : '加入购物车' }}</button>
+              <div class="pfoot">
+                <span class="price">¥{{ p.price.toFixed(2) }}</span>
+                <button @click="cart.add(p)">{{ cart.has(p.id) ? '再加一件' : '加入购物车' }}</button>
+              </div>
             </div>
           </li>
         </ul>

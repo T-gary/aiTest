@@ -42,9 +42,18 @@ body {
 .content { padding: 0; min-width: 0; }
 
 /* ---------- 商城页 ---------- */
-.shop { max-width: 1400px; margin: 0 auto; padding: 14px 16px 32px; }
+/* PC：搜索栏固定，左右两栏固定，中间商品区独立滚动 */
+.shop {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 14px 16px;
+  height: calc(100vh - 46px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
 
-.topbar { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.topbar { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; flex: 0 0 auto; }
 
 .searchbox {
   flex: 1;
@@ -59,7 +68,18 @@ body {
 .searchbox input { border: 0; outline: 0; flex: 1; padding: 10px 14px; font-size: 14px; }
 .searchbox button { border: 0; border-radius: 0; background: var(--jd); padding: 0 22px; }
 
-.shop-body { display: grid; grid-template-columns: 190px minmax(0, 1fr) 68px; gap: 14px; align-items: start; }
+.shop-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr) 68px;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.main { overflow-y: auto; padding-right: 6px; }
+.cats { overflow-y: auto; }
+.rail { align-self: start; max-height: 100%; overflow-y: auto; }
 
 .qty { display: flex; align-items: center; gap: 6px; }
 .qty button.ghost { padding: 1px 9px; font-size: 13px; }
@@ -125,37 +145,57 @@ body {
 .dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, .5); cursor: pointer; }
 .dots i.on { background: #fff; width: 18px; border-radius: 4px; }
 
-/* 商品列表 */
+/* 商品栅格 */
 .listhead { display: flex; align-items: baseline; gap: 10px; margin: 18px 0 10px; }
 .listhead h1 { font-size: 17px; margin: 0; }
 
-.plist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.plist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
 
 .plist li {
   display: flex;
-  gap: 14px;
-  align-items: center;
+  flex-direction: column;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 10px;
-  padding: 12px;
+  overflow: hidden;
 }
 
-.plist img, .thumb-ph {
-  width: 92px;
-  height: 92px;
-  flex: 0 0 92px;
-  border-radius: 8px;
+.pthumb {
+  width: 100%;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   background: #eef1f6;
+  display: block;
+}
+
+.plist .thumb-ph {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 0;
 }
 
 .thumb-ph { display: grid; place-items: center; color: var(--muted); font-size: 12px; }
 
-.pinfo { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.pbody { padding: 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
 .pname { font-weight: 600; font-size: 15px; }
-.pdesc { color: var(--muted); font-size: 12px; line-height: 1.5; }
-.pbuy { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex: 0 0 auto; }
+.pdesc {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.pfoot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 4px; }
+.pfoot button { padding: 7px 12px; font-size: 13px; white-space: nowrap; }
 
 .chip {
   display: inline-block;
@@ -168,8 +208,6 @@ body {
 
 /* 右侧悬浮工具栏 */
 .rail {
-  position: sticky;
-  top: 60px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -291,7 +329,7 @@ button.link { background: none; color: var(--brand); padding: 0; }
 button.danger { background: var(--danger); }
 button.ghost { background: #fff; color: var(--text); border-color: var(--line); }
 
-.pbuy button, .banner-card button { background: var(--jd); }
+.pfoot button, .banner-card button { background: var(--jd); }
 
 .form { display: flex; flex-direction: column; gap: 10px; max-width: 360px; }
 .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
@@ -314,22 +352,18 @@ th { color: var(--muted); font-weight: 500; }
 
 /* ---------- 窄屏（安卓） ---------- */
 @media (max-width: 1100px) {
-  .shop-body { grid-template-columns: 160px minmax(0, 1fr); }
-  .rail {
-    grid-column: 1 / -1;
-    position: static;
-    flex-direction: row;
-    justify-content: space-around;
-    border-radius: 10px;
-  }
+  .shop-body { grid-template-columns: 160px minmax(0, 1fr) 60px; }
+  .rail { padding: 4px 2px; }
+  .railitem { padding: 8px 2px; font-size: 11px; }
+  .railicon { width: 22px; height: 22px; }
 }
 
 @media (max-width: 760px) {
   .hdr { padding: 0 12px; gap: 10px; }
   .hdr nav { gap: 12px; font-size: 13px; }
-  .shop { padding: 10px 12px 28px; padding-right: 58px; }
-  .checkout { padding-right: 58px; }
-  .shop-body { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .shop { padding: 10px 12px 28px; padding-right: 58px; height: auto; display: block; }
+  .shop-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .main, .cats, .rail { overflow: visible; padding-right: 0; max-height: none; }
 
   /* 手机端悬浮工具栏贴右边，纵向排列 */
   .rail {
@@ -363,10 +397,11 @@ th { color: var(--muted); font-weight: 500; }
   .banner-card { max-width: 100%; }
   .banner-name { font-size: 18px; }
 
-  .plist li { padding: 10px; gap: 10px; }
-  .plist img, .thumb-ph { width: 72px; height: 72px; flex-basis: 72px; }
+  .plist { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .pbody { padding: 10px; gap: 5px; }
   .pname { font-size: 14px; }
-  .pdesc { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .pfoot { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .pfoot button { width: 100%; padding: 6px 10px; }
   .price { font-size: 15px; }
   table { font-size: 12px; }
   th, td { padding: 6px; }
