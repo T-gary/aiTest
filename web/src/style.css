@@ -700,6 +700,7 @@ th { color: var(--muted); font-weight: 500; }
 
   .shop { padding: 0 12px 64px; height: auto; display: block; background: #f4f5f7; }
   .adminpage { padding: 12px 12px 64px; }
+  .catpage { height: calc(100vh - 44px); height: calc(100dvh - 44px); }
 
   /* 桌面专属元素隐藏 */
   .topbar, .cats { display: none !important; }
@@ -2396,13 +2397,17 @@ th { color: var(--muted); font-weight: 500; }
 .catpage {
   max-width: 480px;
   margin: 0 auto;
-  min-height: 100vh;
+  height: calc(100vh - 46px);
+  height: calc(100dvh - 46px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   background: #f4f5f7;
-  padding-bottom: 64px;
 }
 
 /* 顶部搜索 */
 .cat-head {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -2433,6 +2438,7 @@ th { color: var(--muted); font-weight: 500; }
 
 /* 圆形分类条 */
 .cat-circles {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -2506,13 +2512,21 @@ th { color: var(--muted); font-weight: 500; }
   row-gap: 12px;
 }
 
-.cat-body { display: flex; min-height: calc(100vh - 220px); }
+.cat-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
 
 .cat-side {
   flex: 0 0 92px;
   background: #f2f3f5;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  padding-bottom: 64px;
+  -webkit-overflow-scrolling: touch;
 }
 .cat-side button {
   background: none;
@@ -2525,7 +2539,14 @@ th { color: var(--muted); font-weight: 500; }
 }
 .cat-side button.on { background: #fff; color: #f5333f; font-weight: 600; }
 
-.cat-list { flex: 1; min-width: 0; background: #fff; }
+.cat-list {
+  flex: 1;
+  min-width: 0;
+  background: #fff;
+  overflow-y: auto;
+  padding-bottom: 64px;
+  -webkit-overflow-scrolling: touch;
+}
 .cat-list ul { list-style: none; margin: 0; padding: 0; }
 .cat-tip { padding: 24px 12px; text-align: center; }
 
@@ -2594,7 +2615,6 @@ th { color: var(--muted); font-weight: 500; }
   color: var(--text);
 }
 .cat-chips button.on { background: #fdeceb; border-color: #ffd2ce; color: #f5333f; font-weight: 600; }
-.cat-chips-more { margin-left: auto; flex: 0 0 auto; font-size: 12px; color: var(--muted); }
 
 /* 商品行 */
 .cat-row {
@@ -2934,6 +2954,11 @@ th { color: var(--muted); font-weight: 500; }
   left: 0;
   right: 0;
   bottom: 0;
+}
+
+/* 手机预览框内：分类页高度跟随设备框 */
+.stage.phone .catpage {
+  height: 100%;
 }
 
 /* 手机预览框内：直播浮层相对设备框定位 */

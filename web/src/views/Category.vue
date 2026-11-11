@@ -168,7 +168,6 @@ onMounted(loadShell)
         <div class="cat-chips">
           <button class="on">全部</button>
           <button v-for="c in categories.slice(1, 3)" :key="c.name" @click="pick(c.name)">{{ c.name }}</button>
-          <span class="cat-chips-more">品 ⌄</span>
         </div>
 
         <p v-if="loading" class="muted cat-tip">加载中…</p>
