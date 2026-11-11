@@ -19,7 +19,7 @@ const checkedCount = computed(() => cart.checkedCount.value)
   <div class="cartpage">
     <header class="cart-head">
       <div class="cart-title">购物车 <em>({{ cart.count.value }})</em></div>
-      <div class="cart-addr">朝阳区望京花园西区109号楼</div>
+      <div class="cart-addr">朝阳区慧谷阳光100号楼</div>
       <div class="cart-actions">
         <button>对比</button>
         <button>管理</button>

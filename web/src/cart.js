@@ -20,10 +20,11 @@ const checked = computed(() => items.value.filter((i) => i.checked))
 
 export const cart = {
   items,
-  count: computed(() => items.value.reduce((n, i) => n + i.qty, 0)),
+  // 角标与「购物车 (N)」都用商品种数，而不是件数
+  count: computed(() => items.value.length),
   total: computed(() => items.value.reduce((n, i) => n + i.price * i.qty, 0)),
   checkedItems: checked,
-  checkedCount: computed(() => checked.value.reduce((n, i) => n + i.qty, 0)),
+  checkedCount: computed(() => checked.value.length),
   checkedTotal: computed(() => checked.value.reduce((n, i) => n + i.price * i.qty, 0)),
   allChecked: computed(() => items.value.length > 0 && items.value.every((i) => i.checked)),
   has: (id) => items.value.some((i) => i.id === id),

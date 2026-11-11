@@ -30,6 +30,26 @@ const hint = ref(0)
 // 回到顶部
 const showTop = ref(false)
 
+// 领奖浮层
+const prizeClosed = ref(localStorage.getItem('prizeClosed') === '1')
+
+function closePrize() {
+  prizeClosed.value = true
+  localStorage.setItem('prizeClosed', '1')
+}
+
+function scrollToFlash() {
+  document.querySelector('.m-flash')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+}
+
+// 秒杀横滑：滚轮/触控板纵向滚动映射成横向
+function onFlashWheel(e) {
+  const row = e.currentTarget
+  if (row.scrollWidth <= row.clientWidth) return
+  e.preventDefault()
+  row.scrollLeft += e.deltaY || e.deltaX
+}
+
 function onScroll(e) {
   const t = e.target
   const y = t === document || t === window ? window.scrollY || 0 : t.scrollTop || 0
@@ -208,7 +228,7 @@ onBeforeUnmount(() => {
             <h3>限时秒杀</h3>
             <span class="m-timer">仅剩 <em>{{ flashTime }}</em></span>
           </div>
-          <div class="m-flash-row">
+          <div class="m-flash-row" @wheel.prevent="onFlashWheel">
             <button v-for="f in featured" :key="f.id" class="m-flash-item" @click="cart.add(f)">
               <img v-if="f.image_url" :src="f.image_url" :alt="f.name" loading="lazy" />
               <div v-else class="thumb-ph">暂无图片</div>
@@ -310,5 +330,18 @@ onBeforeUnmount(() => {
     <button v-show="showTop" class="backtop" aria-label="回到顶部" @click="backToTop">
       <svg viewBox="0 0 24 24"><path d="M12 19V6M6 11.5L12 5.5l6 6" /></svg>
     </button>
+
+    <!-- 立即领奖浮层 -->
+    <div v-if="!prizeClosed" class="m-prize">
+      <button class="m-prize-main" @click="scrollToFlash">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="9" width="18" height="11" rx="1.5" />
+          <path d="M3 13h18M12 9v11" />
+          <path d="M12 9S9.5 3.5 7.5 4.6C5.5 5.7 7 9 12 9zM12 9s2.5-5.5 4.5-4.4C18.5 5.7 17 9 12 9z" />
+        </svg>
+        <span>立即领奖</span>
+      </button>
+      <button class="m-prize-close" aria-label="关闭" @click="closePrize">×</button>
+    </div>
   </div>
 </template>

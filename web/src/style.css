@@ -674,7 +674,7 @@ th { color: var(--muted); font-weight: 500; }
 }
 
 /* ---------- 移动版（容器 ≤760px） ---------- */
-.m-head, .m-service, .m-cats, .m-flash, .m-tabs, .backtop { display: none; }
+.m-head, .m-service, .m-cats, .m-flash, .m-tabs, .backtop, .m-prize { display: none; }
 
 @container (max-width: 760px) {
   .hdr { padding: 0 10px; gap: 8px; height: 44px; }
@@ -871,6 +871,60 @@ th { color: var(--muted); font-weight: 500; }
   .price { font-size: 15px; }
 
   .pager { justify-content: center; margin: 12px 0 4px; }
+
+  /* 立即领奖浮层 */
+  .m-prize {
+    display: block;
+    position: fixed;
+    right: 10px;
+    bottom: 64px;
+    z-index: 27;
+    text-align: center;
+  }
+  .m-prize-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 8px 4px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #ff6a5e, #e1251b);
+    color: #fff;
+    font-size: 12px;
+    line-height: 1.2;
+    box-shadow: 0 4px 14px rgba(225, 37, 27, .35);
+    border: 1px solid #ffd6cf;
+  }
+  .m-prize-main svg {
+    width: 26px;
+    height: 26px;
+    fill: none;
+    stroke: #ffe9a8;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .m-prize-close {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    padding: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, .45);
+    color: #fff;
+    font-size: 13px;
+    line-height: 17px;
+    border: 0;
+  }
+
+  /* 秒杀横滑：触控顺滑 + 隐藏滚动条 */
+  .m-flash-row {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+  .m-flash-item { scroll-snap-align: start; }
 
   /* 底部导航：固定到视口/设备框底部，滚动时不漂移 */
   .m-tabs {
@@ -1214,6 +1268,13 @@ th { color: var(--muted); font-weight: 500; }
   left: 0;
   right: 0;
   bottom: 0;
+}
+
+/* 手机预览框内：立即领奖浮层相对设备框定位 */
+.stage.phone .m-prize {
+  position: absolute;
+  right: 10px;
+  bottom: 64px;
 }
 
 /* 手机预览框内：回到顶部相对设备框定位 */
