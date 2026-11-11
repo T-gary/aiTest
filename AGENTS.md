@@ -43,6 +43,7 @@ pj/
 - PC 端（v0.2.2）：中间商品区独立滚动，左右两栏固定；商品用栅格 `auto-fill minmax(200px,1fr)`；每页 20 条。
 - 断点用**容器查询**（`.app { container-type: inline-size }`），不是视口媒体查询：这样同一套 CSS 既能服务真机，也能服务 390px 预览框。
 - 「移动版」按钮 = 手机预览（`viewmode.js` 存 localStorage），`Esc` 退出；真机 ≤500px 自动取消设备框。
+- 移动版首页参考墨刀「生鲜项目」原型：`m-head` / `m-service` / `m-cats` / `m-flash` / `plist` / `m-tabs`，桌面组件在容器查询里 `display:none`。
 - 购物车**纯前端**（localStorage），不落库、不下单支付；首页右侧工具栏购物车项带件数角标，点击进 `/checkout`。
 - `featured` 标记的商品进首页轮播；管理员可切换。
 - 看板指标：商品总数、账号总数、累计登录次数、每个账号登录次数/最近登录/上架产品数、最近 50 条登录记录。

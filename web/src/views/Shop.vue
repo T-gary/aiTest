@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { api } from '../api'
+import { api, auth } from '../api'
 import { cart } from '../cart'
 import { mobileView } from '../viewmode'
 
@@ -63,7 +63,23 @@ function go(p) {
   loadProducts()
 }
 
+function scrollToCats() {
+  document.querySelector('.m-cats')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
 const current = computed(() => featured.value[slide.value % (featured.value.length || 1)])
+const user = computed(() => auth.user())
+
+// 秒杀倒计时：整点结束，仅展示
+const now = ref(Date.now())
+const flashTime = computed(() => {
+  const d = new Date(now.value)
+  const left = 3600000 - (d.getMinutes() * 60000 + d.getSeconds() * 1000 + d.getMilliseconds())
+  const m = String(Math.floor(left / 60000)).padStart(2, '0')
+  const s = String(Math.floor((left % 60000) / 1000)).padStart(2, '0')
+  return `00:${m}:${s}`
+})
+let clock = 0
 
 onMounted(() => {
   loadShell()
@@ -71,9 +87,13 @@ onMounted(() => {
   timer = setInterval(() => {
     if (featured.value.length > 1) slide.value = (slide.value + 1) % featured.value.length
   }, 4000)
+  clock = setInterval(() => (now.value = Date.now()), 1000)
 })
 
-onBeforeUnmount(() => clearInterval(timer))
+onBeforeUnmount(() => {
+  clearInterval(timer)
+  clearInterval(clock)
+})
 </script>
 
 <template>
@@ -85,6 +105,24 @@ onBeforeUnmount(() => clearInterval(timer))
         <button @click="search">搜索</button>
       </div>
     </header>
+
+    <!-- 移动版头部：定位 + 搜索 + 扫码 -->
+    <div class="m-head">
+      <span class="m-loc">北京<em>⌄</em></span>
+      <div class="m-search">
+        <input v-model="q" placeholder="搜索商品" @keyup.enter="search" />
+        <button @click="search" aria-label="搜索">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" /><path d="M16 16l4.5 4.5" /></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- 移动版服务条 -->
+    <div class="m-service">
+      <span>免费包送</span>
+      <span>严格安检</span>
+      <span>包退包赔</span>
+    </div>
 
     <p v-if="error" class="error">{{ error }}</p>
 
@@ -98,6 +136,18 @@ onBeforeUnmount(() => clearInterval(timer))
         </button>
         <p v-if="!cats.length" class="muted small">暂无分类，录入商品时填写「分类」即可出现在这里。</p>
       </aside>
+
+      <!-- 移动版分类宫格 -->
+      <div class="m-cats">
+        <button :class="{ on: !category }" @click="pick('')">
+          <span class="m-cat-icon all">全</span>
+          <span class="m-cat-label">全部</span>
+        </button>
+        <button v-for="(c, i) in cats" :key="c.name" :class="{ on: category === c.name }" @click="pick(c.name)">
+          <span class="m-cat-icon" :class="'tone-' + (i % 6)">{{ c.name.slice(0, 1) }}</span>
+          <span class="m-cat-label">{{ c.name }}</span>
+        </button>
+      </div>
 
       <section class="main">
         <div class="banner" :style="current?.image_url ? { backgroundImage: `url(${current.image_url})` } : {}">
@@ -116,8 +166,24 @@ onBeforeUnmount(() => clearInterval(timer))
           </div>
         </div>
 
+        <!-- 移动版限时秒杀（取轮播商品横滑） -->
+        <div v-if="featured.length" class="m-flash">
+          <div class="m-sec-head">
+            <h3>限时秒杀</h3>
+            <span class="m-timer">仅剩 <em>{{ flashTime }}</em></span>
+          </div>
+          <div class="m-flash-row">
+            <button v-for="f in featured" :key="f.id" class="m-flash-item" @click="cart.add(f)">
+              <img v-if="f.image_url" :src="f.image_url" :alt="f.name" loading="lazy" />
+              <div v-else class="thumb-ph">暂无图片</div>
+              <span class="m-flash-name">{{ f.name }}</span>
+              <span class="price">¥{{ f.price.toFixed(2) }}</span>
+            </button>
+          </div>
+        </div>
+
         <div class="listhead">
-          <h1>{{ category || '全部商品' }}</h1>
+          <h1>{{ category || '今日上新' }}</h1>
           <span class="muted">共 {{ total }} 件</span>
         </div>
 
@@ -200,5 +266,26 @@ onBeforeUnmount(() => clearInterval(timer))
         </span>
       </aside>
     </div>
+
+    <!-- 移动版底部导航 -->
+    <nav class="m-tabs">
+      <RouterLink to="/" class="on">
+        <svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8.5H4V11z" /></svg>
+        <span>首页</span>
+      </RouterLink>
+      <button @click="scrollToCats">
+        <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1" /><rect x="13" y="4" width="7" height="7" rx="1" /><rect x="4" y="13" width="7" height="7" rx="1" /><rect x="13" y="13" width="7" height="7" rx="1" /></svg>
+        <span>分类</span>
+      </button>
+      <RouterLink to="/checkout">
+        <svg viewBox="0 0 24 24"><path d="M3 4h2.2l2 10.5h10.2L20 7H6.1" /><circle cx="9.5" cy="19" r="1.6" /><circle cx="17" cy="19" r="1.6" /></svg>
+        <span>购物车</span>
+        <em v-if="cart.count.value" class="m-tab-badge">{{ cart.count.value > 99 ? '99+' : cart.count.value }}</em>
+      </RouterLink>
+      <RouterLink :to="user ? '/admin' : '/login'">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8" /><path d="M4.5 20c1.2-3.8 4-5.5 7.5-5.5s6.3 1.7 7.5 5.5" /></svg>
+        <span>我的</span>
+      </RouterLink>
+    </nav>
   </div>
 </template>

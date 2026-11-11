@@ -47,12 +47,12 @@ watch(mobileView, (v) => document.documentElement.classList.toggle('in-phone', v
             {{ user.username }}
             <button class="link" @click="logout">退出</button>
           </span>
-          <button v-if="mobileView" class="link mode-exit" @click="mobileView = false">桌面版</button>
         </nav>
       </header>
       <main class="content">
         <RouterView />
       </main>
     </div>
+    <button v-if="mobileView" class="phone-exit" @click="mobileView = false">退出移动版</button>
   </div>
 </template>
