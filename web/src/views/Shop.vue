@@ -43,7 +43,7 @@ function closeLive() {
 }
 
 // 直播播放器（B 站外链，浮层内嵌入播放器自动播放）
-const LIVE_BVID = 'BV1kdWn6ZEW4'
+const LIVE_BVID = 'BV17iEU6mE8i'
 const LIVE_SRC = `https://player.bilibili.com/player.html?bvid=${LIVE_BVID}&page=1&autoplay=1&muted=1&danmaku=0&high_quality=1`
 
 // 领奖浮层
