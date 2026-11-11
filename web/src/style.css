@@ -423,7 +423,7 @@ th { color: var(--muted); font-weight: 500; }
   .hdr .brand { font-size: 15px; }
   .hdr nav { gap: 10px; font-size: 12px; }
 
-  .shop { padding: 0 12px 8px; height: auto; display: block; background: #f4f5f7; }
+  .shop { padding: 0 12px 64px; height: auto; display: block; background: #f4f5f7; }
 
   /* 桌面专属元素隐藏 */
   .topbar, .cats, .rail { display: none !important; }
@@ -614,14 +614,16 @@ th { color: var(--muted); font-weight: 500; }
 
   .pager { justify-content: center; margin: 12px 0 4px; }
 
-  /* 底部导航 */
+  /* 底部导航：固定到视口/设备框底部，滚动时不漂移 */
   .m-tabs {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    position: sticky;
+    position: fixed;
+    left: 0;
+    right: 0;
     bottom: 0;
     z-index: 30;
-    margin: 0 -12px -8px;
+    margin: 0;
     background: #fff;
     border-top: 1px solid var(--line);
     padding: 6px 0 max(6px, env(safe-area-inset-bottom));
@@ -687,11 +689,22 @@ th { color: var(--muted); font-weight: 500; }
   }
 
   /* 消息页在手机宽度下收窄边距 */
-  .msgs { padding-bottom: 4px; }
+  .msgs { min-height: 100%; padding-bottom: 64px; }
   .msg-head { padding: 12px 12px 14px; }
   .msg-head h1 { font-size: 20px; }
   .msg-grid { gap: 8px; }
   .msgs .m-tabs { margin: 0; }
+
+  /* 推荐区标题吸顶 */
+  .msg-reco { padding-top: 0; }
+  .msg-reco-head {
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    background: #fff;
+    padding: 12px 2px 10px;
+    border-radius: 14px 14px 0 0;
+  }
 
   table { font-size: 12px; }
   th, td { padding: 6px; }
@@ -716,7 +729,7 @@ th { color: var(--muted); font-weight: 500; }
   margin: 0 auto;
   min-height: 100vh;
   background: #f4f5f7;
-  padding-bottom: 8px;
+  padding-bottom: 64px;
 }
 
 .msg-head {
@@ -929,6 +942,14 @@ th { color: var(--muted); font-weight: 500; }
   place-items: center;
   font-size: 17px;
   line-height: 1;
+}
+
+/* 手机预览框内：底部导航相对设备框定位 */
+.stage.phone .m-tabs {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 /* 手机预览框内：回到顶部相对设备框定位 */
