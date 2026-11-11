@@ -1,17 +1,22 @@
 <script setup>
+import { useRoute } from 'vue-router'
 import { cart } from '../cart'
 import { mobileView } from '../viewmode'
+import { messageState } from '../messages'
+
+const route = useRoute()
+const is = (path) => route.path === path
 </script>
 
 <template>
   <aside class="rail">
-    <RouterLink to="/" class="railitem" title="首页">
+    <RouterLink to="/" class="railitem" :class="{ on: is('/') }" title="首页">
       <span class="railicon">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8.5H4V11z" /></svg>
       </span>
       <span class="raillabel">首页</span>
     </RouterLink>
-    <RouterLink to="/cart" class="railitem" title="购物车">
+    <RouterLink to="/cart" class="railitem" :class="{ on: is('/cart') }" title="购物车">
       <span class="railicon">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M3 4h2.2l2 10.5h10.2L20 7H6.1" />
@@ -22,7 +27,7 @@ import { mobileView } from '../viewmode'
       </span>
       <span class="raillabel">购物车</span>
     </RouterLink>
-    <RouterLink to="/profile" class="railitem" title="我的">
+    <RouterLink to="/profile" class="railitem" :class="{ on: is('/profile') }" title="我的">
       <span class="railicon">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M8.5 13.5c1 1.4 2.3 1.4 3.5 1.4s2.5 0 3.5-1.4" /></svg>
       </span>
@@ -40,12 +45,13 @@ import { mobileView } from '../viewmode'
       </span>
       <span class="raillabel">移动版</span>
     </button>
-    <span class="railitem off">
+    <RouterLink to="/messages" class="railitem" :class="{ on: is('/messages') }" title="消息">
       <span class="railicon">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v3.5h3.5V14a2 2 0 1 1 0 4v2H8v-2.5a2 2 0 1 1 0-4V4z" /></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h16v11H9l-5 4v-15z" /></svg>
+        <em v-if="messageState.unread" class="badge">{{ messageState.unread > 99 ? '99+' : messageState.unread }}</em>
       </span>
-      <span class="raillabel">插件版</span>
-    </span>
+      <span class="raillabel">消息</span>
+    </RouterLink>
     <span class="railitem off">
       <span class="railicon">
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2" /><path d="M7.5 15.5l5-5 2.5 2.5-5 5H7.5v-2.5z" /></svg>

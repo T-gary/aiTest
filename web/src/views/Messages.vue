@@ -27,6 +27,9 @@ const messages = computed(() => [
   { id: 1, title: '极简商城 客服', official: true, desc: '欢迎光临，有任何问题都可以在这里留言', time: '3 天前' }
 ])
 
+// image_url 支持逗号分隔多图，取第一张
+const firstImage = (p) => (p.image_url || '').split(',')[0].trim()
+
 onMounted(async () => {
   try {
     const data = await api('/products?size=6&page=1')
@@ -39,6 +42,7 @@ onMounted(async () => {
 
 <template>
   <div class="msgs">
+    <div class="msg-m">
     <header class="msg-head">
       <h1>消息</h1>
       <div class="row">
@@ -111,5 +115,84 @@ onMounted(async () => {
     </section>
 
     <MTabs />
+    </div>
+
+    <!-- PC 版消息中心 -->
+    <div class="msg-pc">
+      <header class="mp-head">
+        <h1>消息中心</h1>
+        <div class="mp-head-actions">
+          <button @click="messageState.clear()">清除未读</button>
+          <span>···</span>
+        </div>
+      </header>
+
+      <div class="mp-body">
+        <!-- 左：消息分类 -->
+        <aside class="mp-side">
+          <button
+            v-for="e in entries"
+            :key="'pc-' + e.name"
+            :class="{ on: active === e.name }"
+            @click="active = e.name"
+          >
+            <span class="mp-side-icon">
+              <svg v-if="e.tone === 'session'" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M8.5 12.5c1 1.2 2.3 1.2 3.5 1.2s2.5 0 3.5-1.2" /></svg>
+              <svg v-else-if="e.tone === 'logistics'" viewBox="0 0 24 24"><path d="M3 7h9v9H3zM12 10h4l4 3.5V16h-8z" /><circle cx="7" cy="18" r="1.6" /><circle cx="17" cy="18" r="1.6" /></svg>
+              <svg v-else-if="e.tone === 'remind'" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2H4.5L6 16z" /><path d="M10 20h4" /></svg>
+              <svg v-else-if="e.tone === 'promo'" viewBox="0 0 24 24"><path d="M4 4h9l7 7-9 9-7-7V4z" /><circle cx="8.5" cy="8.5" r="1.4" /></svg>
+              <svg v-else viewBox="0 0 24 24"><path d="M4 6h10v9H8l-4 3V6z" /><path d="M14 9h6v7l-3 2.5" /></svg>
+            </span>
+            <span class="mp-side-label">{{ e.name }}</span>
+            <em v-if="e.unread && messageState.unread" class="mp-side-badge">1</em>
+          </button>
+        </aside>
+
+        <!-- 中：消息列表 -->
+        <section class="mp-list">
+          <nav class="mp-filters">
+            <button v-for="f in filters" :key="'pf-' + f.name" :class="{ on: filter === f.name }" @click="filter = f.name">
+              {{ f.name }}<em v-if="f.tag">{{ f.tag }}</em>
+            </button>
+          </nav>
+
+          <p class="mp-date">三天前的消息</p>
+
+          <article v-for="m in messages" :key="'pm-' + m.id" class="mp-item">
+            <div class="mp-avatar">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M8.5 12.5c1 1.2 2.3 1.2 3.5 1.2s2.5 0 3.5-1.2" /></svg>
+            </div>
+            <div class="mp-item-body">
+              <div class="mp-item-title">
+                <span>{{ m.title }}</span>
+                <em v-if="m.official">官方</em>
+                <i>{{ m.time }}</i>
+              </div>
+              <p>{{ m.desc }}</p>
+            </div>
+          </article>
+
+          <p class="mp-end">没有更多消息了</p>
+        </section>
+
+        <!-- 右：推荐商品 -->
+        <aside class="mp-reco">
+          <div class="mp-reco-head">
+            <strong>推荐</strong>
+            <span>猜你喜欢</span>
+          </div>
+          <ul class="mp-reco-list">
+            <li v-for="p in products" :key="'pr-' + p.id">
+              <img v-if="p.image_url" :src="firstImage(p)" :alt="p.name" loading="lazy" />
+              <div v-else class="thumb-ph">暂无图片</div>
+              <div class="mp-reco-body">
+                <div class="mp-reco-name">{{ p.name }}</div>
+                <span class="mp-reco-price">¥{{ p.price.toFixed(2) }}</span>
+              </div>
+            </li>
+          </ul>
+        </aside>
+      </div>
+    </div>
   </div>
 </template>

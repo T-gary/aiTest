@@ -26,7 +26,7 @@ const route = useRoute()
       <span>购物车</span>
       <em v-if="cart.count.value" class="m-tab-badge">{{ cart.count.value > 99 ? '99+' : cart.count.value }}</em>
     </RouterLink>
-    <RouterLink to="/profile" :class="{ on: route.path === '/profile' }">
+    <RouterLink to="/profile" :class="{ on: route.path === '/profile' || route.path === '/admin' }">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8" /><path d="M4.5 20c1.2-3.8 4-5.5 7.5-5.5s6.3 1.7 7.5 5.5" /></svg>
       <span>我的</span>
     </RouterLink>

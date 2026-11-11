@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { api, auth } from '../api'
+import MTabs from '../components/MTabs.vue'
 
 const router = useRouter()
 const user = ref(auth.user())
@@ -125,6 +126,12 @@ onMounted(() => {
 
 <template>
   <div class="adminpage">
+    <!-- 移动版顶部：与首页一致的红色条（标题为「后台管理」） -->
+    <header class="m-top">
+      <span class="m-top-title">后台管理</span>
+      <div class="m-top-promo">3C新品<br />换新0元购</div>
+    </header>
+
     <div class="row" style="justify-content: space-between">
       <h1>后台</h1>
       <div class="row">
@@ -251,5 +258,7 @@ onMounted(() => {
         </table>
       </div>
     </section>
+
+    <MTabs />
   </div>
 </template>
