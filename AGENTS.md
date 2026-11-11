@@ -28,7 +28,7 @@ pj/
     src/views/Messages.vue 消息页（移动版）
     src/views/Profile.vue  我的页（移动版个人中心）
     src/views/Category.vue 分类页（移动版）
-    src/views/Detail.vue   商品详情页（基本信息 / 图文详情）
+    src/views/Detail.vue   商品详情页（PC 三栏 / 移动版单列）
     src/components/MTabs.vue 移动版底部导航（首页/分类/消息/购物车/我的）
     src/messages.js       消息未读数（localStorage 演示）
     src/cart.js           购物车（localStorage，纯前端）
@@ -56,6 +56,7 @@ pj/
 - `featured` 标记的商品进首页轮播；管理员可切换。
 - 看板指标：商品总数、账号总数、累计登录次数、每个账号登录次数/最近登录/上架产品数、最近 50 条登录记录。
 - 初始管理员：`admin / 123456`（首次启动自动创建，请尽快改密）。
+- 商品详情页双布局：同一组件两套 DOM，容器查询在 760px 处切换；移动版保持原单列样式，PC 版仿京东三栏（缩略图 / 主图 / 460px 购买面板）。多图 `image_url` 同时充当「款式」缩略图。
 
 ## 本地开发环境（Windows）
 

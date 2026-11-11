@@ -40,6 +40,8 @@ body {
 .hdr .who { color: var(--muted); display: flex; gap: 8px; align-items: center; }
 
 .content { padding: 0; min-width: 0; }
+.content.with-rail { padding-right: 84px; }
+.stage.phone .content { padding-right: 0; }
 
 /* 容器查询基准：.app 宽度决定手机/桌面样式 */
 .app { container-type: inline-size; position: relative; min-height: 100vh; }
@@ -121,14 +123,13 @@ body {
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: 190px minmax(0, 1fr) 68px;
+  grid-template-columns: 190px minmax(0, 1fr);
   gap: 14px;
   align-items: stretch;
 }
 
 .main { overflow-y: auto; padding-right: 6px; }
 .cats { overflow-y: auto; }
-.rail { align-self: start; max-height: 100%; overflow-y: auto; }
 
 .qty { display: flex; align-items: center; gap: 6px; }
 .qty button.ghost { padding: 1px 9px; font-size: 13px; }
@@ -255,8 +256,14 @@ body {
   border-radius: 4px;
 }
 
-/* 右侧悬浮工具栏 */
+/* 右侧悬浮工具栏（固定右上，全站显示） */
 .rail {
+  position: fixed;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 25;
+  width: 62px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -265,6 +272,8 @@ body {
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 6px 4px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
 }
 
 .railitem {
@@ -667,10 +676,11 @@ th { color: var(--muted); font-weight: 500; }
 
 /* ---------- 窄屏（安卓） ---------- */
 @media (max-width: 1100px) {
-  .shop-body { grid-template-columns: 160px minmax(0, 1fr) 60px; }
-  .rail { padding: 4px 2px; }
+  .shop-body { grid-template-columns: 160px minmax(0, 1fr); }
+  .rail { padding: 4px 2px; width: 56px; }
   .railitem { padding: 8px 2px; font-size: 11px; }
   .railicon { width: 22px; height: 22px; }
+  .content.with-rail { padding-right: 74px; }
 }
 
 /* ---------- 移动版（容器 ≤760px） ---------- */
@@ -684,7 +694,7 @@ th { color: var(--muted); font-weight: 500; }
   .shop { padding: 0 12px 64px; height: auto; display: block; background: #f4f5f7; }
 
   /* 桌面专属元素隐藏 */
-  .topbar, .cats, .rail { display: none !important; }
+  .topbar, .cats { display: none !important; }
 
   .shop-body { display: block; }
   .main { overflow: visible; padding: 0; }
@@ -1888,6 +1898,320 @@ th { color: var(--muted); font-weight: 500; }
 .dt-cart { background: #f7b53c; color: #fff; }
 .dt-buy { background: #f5333f; color: #fff; }
 
+/* ---------- 商品详情页 · PC 版（默认隐藏，容器 >760px 生效） ---------- */
+.dt-pc,
+.dt-rail { display: none; }
+
+@container (min-width: 761px) {
+  .detail {
+    max-width: 1200px;
+    min-height: 0;
+    margin: 0 auto;
+    padding: 0 16px 40px;
+    background: transparent;
+  }
+
+  .dt-m { display: none; }
+  .dt-pc { display: block; }
+
+  .dt-rail {
+    display: flex;
+    position: fixed;
+    right: 16px;
+    top: 32%;
+    width: 62px;
+    z-index: 20;
+  }
+
+  /* 面包屑 */
+  .dt-crumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 14px 4px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .dt-crumb a { color: var(--muted); text-decoration: none; }
+  .dt-crumb a:hover { color: var(--jd); }
+  .dt-crumb .cur { color: var(--text); }
+
+  /* 店铺条 */
+  .dt-store {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: #fff;
+    border-radius: 10px;
+  }
+  .dt-store-logo {
+    flex: 0 0 auto;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(140deg, #e1251b, #f5333f);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .dt-store-info { min-width: 0; }
+  .dt-store-info b { display: block; font-size: 16px; }
+  .dt-store-stars { color: #f7b53c; font-size: 13px; letter-spacing: 1px; }
+  .dt-store-stars em { font-style: normal; color: var(--muted); font-size: 12px; margin-left: 4px; }
+  .dt-store-info p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+  .dt-store-actions { margin-left: auto; display: flex; gap: 10px; }
+  .dt-store-actions button {
+    padding: 7px 14px;
+    font-size: 13px;
+    color: var(--text);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+  }
+  .dt-store-actions button:hover { border-color: #c8ced8; }
+
+  /* 三栏主体 */
+  .dt-pc-body {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) 360px;
+    gap: 14px;
+    align-items: start;
+    margin-top: 12px;
+  }
+
+  /* 左：竖排缩略图 */
+  .dt-pc-thumbs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 576px;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .dt-pc-thumbs::-webkit-scrollbar { display: none; }
+  .dt-pc-thumb {
+    flex: 0 0 auto;
+    width: 64px;
+    height: 64px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .dt-pc-thumb.on { border-color: var(--jd); }
+  .dt-pc-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* 中：主图 */
+  .dt-pc-stage {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .dt-pc-stage > img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .dt-pc-noimg {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .dt-pc-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 50px;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    background: rgba(16, 24, 40, .18);
+    color: #fff;
+    font-size: 26px;
+    line-height: 1;
+  }
+  .dt-pc-arrow:hover { background: rgba(16, 24, 40, .34); }
+  .dt-pc-arrow.prev { left: 0; }
+  .dt-pc-arrow.next { right: 0; }
+
+  /* 右：购买面板 */
+  .dt-pc-buy {
+    position: sticky;
+    top: 16px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .dt-pc-promo {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 11px 16px;
+    background: linear-gradient(90deg, #e1251b, #f5333f);
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    font-style: italic;
+  }
+  .dt-pc-promo span { font-size: 12px; font-style: normal; font-weight: 400; opacity: .9; }
+
+  .dt-pc-name {
+    margin: 0;
+    padding: 14px 16px 0;
+    font-size: 18px;
+    line-height: 1.45;
+    font-weight: 700;
+  }
+
+  .dt-pc-pricerow {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 10px 16px 12px;
+  }
+  .dt-pc-price { color: var(--jd); display: flex; align-items: baseline; gap: 1px; }
+  .dt-pc-price span { font-size: 16px; font-weight: 700; }
+  .dt-pc-price b { font-size: 32px; line-height: 1; font-weight: 700; }
+  .dt-pc-old { color: #9aa3af; font-size: 13px; }
+  .dt-pc-sales { margin-left: auto; color: var(--muted); font-size: 12px; }
+
+  .dt-pc-deal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 16px 12px;
+    padding: 7px 10px;
+    border-radius: 6px;
+    background: #fff1f0;
+    color: var(--jd);
+    font-size: 12px;
+  }
+  .dt-pc-deal em {
+    flex: 0 0 auto;
+    font-style: normal;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--jd);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .5px;
+  }
+
+  .dt-pc-meta { border-top: 1px solid #f2f3f5; }
+  .dt-pc-metarow {
+    display: flex;
+    gap: 12px;
+    padding: 11px 16px;
+    border-bottom: 1px solid #f2f3f5;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #4a5361;
+  }
+  .dt-pc-metarow .lbl { flex: 0 0 40px; color: var(--muted); }
+  .dt-pc-metarow b { color: var(--jd); font-weight: 500; }
+
+  .dt-pc-skurow { align-items: flex-start; }
+  .dt-pc-sku-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .dt-pc-sku-item {
+    width: 62px;
+    padding: 4px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .dt-pc-sku-item.on { border-color: var(--jd); background: #fff8f7; }
+  .dt-pc-sku-item img { width: 42px; height: 42px; object-fit: cover; border-radius: 4px; display: block; }
+  .dt-pc-sku-item span { font-size: 11px; color: var(--muted); }
+  .dt-pc-sku-item.on span { color: var(--jd); }
+
+  .dt-pc-qtyrow { align-items: center; }
+  .dt-pc-qtyrow .dt-qty { justify-content: flex-start; }
+
+  .dt-pc-actions { display: flex; gap: 10px; padding: 16px; }
+  .dt-pc-actions button {
+    flex: 1 1 0;
+    height: 46px;
+    border: 0;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .dt-pc-cart { background: #f7b53c; }
+  .dt-pc-cart:hover { background: #eaa72f; }
+  .dt-pc-buy { background: var(--jd); }
+  .dt-pc-buy:hover { background: #c91f16; }
+
+  /* 下方详情 */
+  .dt-pc-detail {
+    margin-top: 14px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .dt-pc-tabs {
+    display: flex;
+    gap: 34px;
+    padding: 0 24px;
+    border-bottom: 1px solid #f2f3f5;
+  }
+  .dt-pc-tabs button {
+    position: relative;
+    padding: 15px 0 13px;
+    background: none;
+    border: 0;
+    font-size: 15px;
+    color: var(--text);
+  }
+  .dt-pc-tabs button.on { color: var(--jd); font-weight: 700; }
+  .dt-pc-tabs button.on::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--jd);
+  }
+
+  .dt-pc-pane { padding: 22px 24px 28px; }
+  .dt-pc-text { margin: 0 0 16px; font-size: 14px; line-height: 1.9; color: #4a5361; }
+  .dt-pc-detail-img { width: 100%; max-width: 760px; display: block; margin: 0 auto 6px; }
+  .dt-pc-endmeta { margin: 18px 0 0; font-size: 12px; color: var(--muted); }
+
+  .dt-pc-svc { margin: 0; padding: 0; list-style: none; display: grid; gap: 14px; max-width: 720px; }
+  .dt-pc-svc li { display: flex; gap: 12px; font-size: 13px; line-height: 1.6; }
+  .dt-pc-svc b { flex: 0 0 120px; font-weight: 600; }
+  .dt-pc-svc span { color: var(--muted); }
+
+  .dt-pc-empty { padding: 60px 24px; text-align: center; color: var(--muted); font-size: 14px; }
+}
+
+/* 宽屏逐步放宽缩略图与购买面板 */
+@container (min-width: 1000px) {
+  .dt-pc-body { grid-template-columns: 72px minmax(0, 1fr) 440px; }
+}
+@container (min-width: 1200px) {
+  .dt-pc-body { grid-template-columns: 72px minmax(0, 1fr) 460px; }
+}
+
 /* ---------- 分类（Category）页 ---------- */
 .catpage {
   max-width: 480px;
@@ -2340,12 +2664,15 @@ th { color: var(--muted); font-weight: 500; }
   bottom: 68px;
 }
 
-/* 手机预览框内：工具栏相对设备框定位，避免跑出边框 */
+/* 手机预览框内：隐藏桌面工具栏（移动版用底部 tab） */
 .stage.phone .rail {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
+  display: none;
+}
+
+/* 窄屏同样隐藏桌面工具栏 */
+@media (max-width: 760px) {
+  .rail { display: none; }
+  .content.with-rail { padding-right: 0; }
 }
 
 /* 手机预览时隐藏页面外滚动，内容在框内滚动 */

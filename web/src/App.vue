@@ -3,10 +3,14 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { auth } from './api'
 import { mobileView } from './viewmode'
+import SideRail from './components/SideRail.vue'
 
 const route = useRoute()
 const router = useRouter()
 const user = ref(auth.user())
+
+// 侧边栏：除后台管理外所有页面显示；手机预览时由移动版组件接管
+const showRail = computed(() => route.path !== '/admin')
 
 const navs = computed(() => {
   const items = [{ to: '/', label: '首页' }]
@@ -49,10 +53,11 @@ watch(mobileView, (v) => document.documentElement.classList.toggle('in-phone', v
           </span>
         </nav>
       </header>
-      <main class="content">
+      <main class="content" :class="{ 'with-rail': showRail }">
         <RouterView />
       </main>
     </div>
+    <SideRail v-if="showRail" />
     <button v-if="mobileView" class="phone-exit" @click="mobileView = false">退出移动版</button>
   </div>
 </template>
