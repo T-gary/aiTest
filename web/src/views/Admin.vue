@@ -188,7 +188,7 @@ onMounted(() => {
             首页轮播
           </label>
         </div>
-        <input v-model="form.image_url" placeholder="图片外链 URL（可留空）" />
+        <input v-model="form.image_url" placeholder="图片外链 URL（多图用英文逗号分隔）" />
         <textarea v-model="form.description" placeholder="商品描述"></textarea>
         <div class="row">
           <button :disabled="busy" @click="submitProduct">上架</button>

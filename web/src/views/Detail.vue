@@ -11,7 +11,20 @@ const p = ref(null)
 const loading = ref(true)
 const error = ref('')
 const tab = ref('基本信息')
-const qty = ref(1)
+const localQty = ref(1)
+const activeImage = ref(0)
+
+// 多图：image_url 支持用英文逗号分隔多个地址
+const images = computed(() =>
+  (p.value?.image_url || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+)
+
+// 购物车里的同款商品（存在时数量与购物车实时联动）
+const cartItem = computed(() => cart.items.value.find((i) => i.id === p.value?.id))
+const qty = computed(() => cartItem.value?.qty ?? localQty.value)
 
 onMounted(async () => {
   try {
@@ -23,9 +36,26 @@ onMounted(async () => {
   }
 })
 
+function plus() {
+  if (!p.value) return
+  if (cartItem.value) cart.setQty(p.value.id, cartItem.value.qty + 1)
+  else localQty.value++
+}
+
+function minus() {
+  if (!p.value) return
+  if (cartItem.value) {
+    if (cartItem.value.qty > 1) cart.setQty(p.value.id, cartItem.value.qty - 1)
+    else cart.remove(p.value.id)
+  } else if (localQty.value > 1) {
+    localQty.value--
+  }
+}
+
 function addToCart() {
   if (!p.value) return
-  for (let i = 0; i < qty.value; i++) cart.add(p.value)
+  if (cartItem.value) cart.setQty(p.value.id, qty.value)
+  else for (let i = 0; i < localQty.value; i++) cart.add(p.value)
 }
 </script>
 
@@ -56,9 +86,25 @@ function addToCart() {
       <!-- 基本信息 -->
       <section v-if="tab === '基本信息'" class="dt-basic">
         <div class="dt-gallery">
-          <img v-if="p.image_url" :src="p.image_url" :alt="p.name" />
+          <img v-if="images.length" :src="images[activeImage] || images[0]" :alt="p.name" />
           <div v-else class="dt-noimg">暂无图片</div>
-          <span class="dt-index">1/1</span>
+          <span class="dt-index">{{ images.length ? activeImage + 1 : 1 }}/{{ Math.max(images.length, 1) }}</span>
+        </div>
+
+        <!-- 缩略图 / 款式切换 -->
+        <div v-if="images.length" class="dt-thumbs">
+          <div class="dt-thumb-row">
+            <button
+              v-for="(src, i) in images"
+              :key="src + i"
+              class="dt-thumb"
+              :class="{ on: i === activeImage }"
+              @click="activeImage = i"
+            >
+              <img :src="src" :alt="`图${i + 1}`" loading="lazy" />
+            </button>
+          </div>
+          <span class="dt-variants">共 {{ images.length }} 款 ›</span>
         </div>
 
         <div class="dt-pricebar">
@@ -73,9 +119,9 @@ function addToCart() {
           <h1 class="dt-name">{{ p.name }}</h1>
           <p class="dt-pickup">提货时间：长期有效</p>
           <div class="dt-qty">
-            <button :disabled="qty <= 1" @click="qty--">−</button>
+            <button :disabled="qty <= 1" @click="minus">−</button>
             <span>{{ qty }}</span>
-            <button @click="qty++">+</button>
+            <button @click="plus">+</button>
           </div>
         </div>
 
@@ -87,7 +133,7 @@ function addToCart() {
       <!-- 图文详情 -->
       <section v-else class="dt-rich">
         <p class="dt-rich-text">{{ p.description }}</p>
-        <img v-if="p.image_url" :src="p.image_url" :alt="p.name" class="dt-rich-img" />
+        <img v-if="images.length" :src="images[activeImage] || images[0]" :alt="p.name" class="dt-rich-img" />
         <p class="dt-rich-meta">
           分类：{{ p.category || '未分类' }}<br />
           录入人：{{ p.created_by }}<br />
