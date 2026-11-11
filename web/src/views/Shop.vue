@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { api } from '../api'
 import { cart } from '../cart'
+import { mobileView } from '../viewmode'
 
 const items = ref([])
 const total = ref(0)
@@ -173,12 +174,12 @@ onBeforeUnmount(() => clearInterval(timer))
           </span>
           <span class="raillabel">客服</span>
         </span>
-        <span class="railitem off">
+        <button class="railitem" title="切换到移动版预览" @click="mobileView = true">
           <span class="railicon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="12" rx="1.5" /><path d="M9 20h6M12 16.5V20" /></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2" /><path d="M10.5 5h3M11 18.5h2" /></svg>
           </span>
-          <span class="raillabel">桌面版</span>
-        </span>
+          <span class="raillabel">移动版</span>
+        </button>
         <span class="railitem off">
           <span class="railicon">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v3.5h3.5V14a2 2 0 1 1 0 4v2H8v-2.5a2 2 0 1 1 0-4V4z" /></svg>

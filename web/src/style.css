@@ -41,6 +41,35 @@ body {
 
 .content { padding: 0; min-width: 0; }
 
+/* 容器查询基准：.app 宽度决定手机/桌面样式 */
+.app { container-type: inline-size; position: relative; min-height: 100vh; }
+
+/* 手机预览：把页面装进 390px 设备框 */
+.stage.phone {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: #e9edf3;
+}
+
+.stage.phone .app {
+  width: 390px;
+  height: min(844px, calc(100vh - 40px));
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 18px 50px rgba(16, 24, 40, .22);
+}
+
+.stage.phone .content { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+.stage.phone .shop { height: auto; }
+.stage.phone .hdr { position: static; flex: 0 0 auto; }
+
 /* ---------- 商城页 ---------- */
 /* PC：搜索栏固定，左右两栏固定，中间商品区独立滚动 */
 .shop {
@@ -54,6 +83,8 @@ body {
 }
 
 .topbar { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; flex: 0 0 auto; }
+
+.topbar .logo { font-weight: 700; font-size: 18px; color: var(--jd); flex: 0 0 auto; }
 
 .searchbox {
   flex: 1;
@@ -236,6 +267,14 @@ body {
 .railitem.off { cursor: default; opacity: .55; }
 .railitem.off:hover { background: none; color: var(--muted); }
 
+button.railitem {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+button.railitem:hover { background: #f2f4f8; color: var(--text); }
+
 .railicon { position: relative; display: block; width: 26px; height: 26px; }
 
 .railicon svg {
@@ -358,7 +397,7 @@ th { color: var(--muted); font-weight: 500; }
   .railicon { width: 22px; height: 22px; }
 }
 
-@media (max-width: 760px) {
+@container (max-width: 760px) {
   .hdr { padding: 0 12px; gap: 10px; }
   .hdr nav { gap: 12px; font-size: 13px; }
   .shop { padding: 10px 12px 28px; padding-right: 58px; height: auto; display: block; }
@@ -393,16 +432,66 @@ th { color: var(--muted); font-weight: 500; }
   .cats button em { display: none; }
   .cats .muted { display: none; }
 
-  .banner { height: 190px; padding: 16px; }
-  .banner-card { max-width: 100%; }
-  .banner-name { font-size: 18px; }
+  .banner { height: 160px; padding: 14px; }
+  .banner-card { max-width: 100%; gap: 4px; }
+  .banner-name { font-size: 17px; }
+  .banner-desc { display: none; }
+  .banner-price { font-size: 18px; }
 
-  .plist { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .plist { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .pbody { padding: 10px; gap: 5px; }
   .pname { font-size: 14px; }
+  .pdesc { display: none; }
+  .pbody .muted.small { display: none; }
   .pfoot { flex-direction: column; align-items: flex-start; gap: 6px; }
-  .pfoot button { width: 100%; padding: 6px 10px; }
+  .pfoot button { width: 100%; padding: 9px 10px; }
   .price { font-size: 15px; }
+
+  /* 移动版首页：搜索独占一行、分类按钮加大点击区 */
+  .topbar { flex-wrap: wrap; gap: 8px; }
+  .topbar .logo { display: none; }
+  .searchbox { max-width: none; width: 100%; flex: 1 1 100%; }
+  .cats button { min-height: 36px; }
+  .cats { scrollbar-width: none; }
+  .cats::-webkit-scrollbar { display: none; }
   table { font-size: 12px; }
   th, td { padding: 6px; }
+
+  /* 结算页在手机宽度下不横向溢出 */
+  .cart-table { min-width: 0; }
+  .cart-table thead th:nth-child(2),
+  .cart-table tbody td:nth-child(2) { display: none; }
+  .checkout .card { overflow-x: hidden; padding: 12px 10px; }
+  .cart-cell img, .cart-cell .thumb-ph { width: 40px; height: 40px; flex-basis: 40px; }
+  .cart-cell .cname { font-size: 13px; }
+  .cart-table th, .cart-table td { padding: 6px 4px; }
+  .sumbar { flex-direction: column; align-items: stretch; }
+  .sumbar .row { justify-content: space-between; }
+  .checkout { padding: 12px; }
+  .checkout h1 { font-size: 18px; }
+}
+
+/* 手机预览框内：工具栏相对设备框定位，避免跑出边框 */
+.stage.phone .rail {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+/* 手机预览时隐藏页面外滚动，内容在框内滚动 */
+html.in-phone, html.in-phone body { overflow: hidden; }
+
+/* 真机/窄窗口不用设备框，直接铺满 */
+@media (max-width: 500px) {
+  .stage.phone { position: static; display: block; background: none; }
+  .stage.phone .app {
+    width: auto;
+    height: auto;
+    min-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .stage.phone .content { overflow: visible; }
+  html.in-phone, html.in-phone body { overflow: auto; }
 }

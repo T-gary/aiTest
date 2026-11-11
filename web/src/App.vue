@@ -1,7 +1,8 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { auth } from './api'
+import { mobileView } from './viewmode'
 
 const route = useRoute()
 const router = useRouter()
@@ -23,24 +24,35 @@ function logout() {
 router.afterEach(() => {
   user.value = auth.user()
 })
+
+// 手机预览：容器宽度锁在 390px，样式靠容器查询切换；直接按 ESC 退出
+function onKey(e) {
+  if (e.key === 'Escape') mobileView.value = false
+}
+window.addEventListener('keydown', onKey)
+onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
+watch(mobileView, (v) => document.documentElement.classList.toggle('in-phone', v), { immediate: true })
 </script>
 
 <template>
-  <div class="app">
-    <header class="hdr">
-      <RouterLink to="/" class="brand">极简商城</RouterLink>
-      <nav>
-        <RouterLink v-for="n in navs" :key="n.to" :to="n.to" :class="{ active: route.path === n.to }">
-          {{ n.label }}
-        </RouterLink>
-        <span v-if="user" class="who">
-          {{ user.username }}
-          <button class="link" @click="logout">退出</button>
-        </span>
-      </nav>
-    </header>
-    <main class="content">
-      <RouterView />
-    </main>
+  <div class="stage" :class="{ phone: mobileView }">
+    <div class="app">
+      <header class="hdr">
+        <RouterLink to="/" class="brand">极简商城</RouterLink>
+        <nav>
+          <RouterLink v-for="n in navs" :key="n.to" :to="n.to" :class="{ active: route.path === n.to }">
+            {{ n.label }}
+          </RouterLink>
+          <span v-if="user" class="who">
+            {{ user.username }}
+            <button class="link" @click="logout">退出</button>
+          </span>
+          <button v-if="mobileView" class="link mode-exit" @click="mobileView = false">桌面版</button>
+        </nav>
+      </header>
+      <main class="content">
+        <RouterView />
+      </main>
+    </div>
   </div>
 </template>

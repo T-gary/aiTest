@@ -26,6 +26,7 @@ pj/
     src/views/Shop.vue    前台：顶部搜索 + 左分类 / 中轮播+列表 / 右悬浮工具栏
     src/views/Checkout.vue 结算页：购物车明细 + 合计
     src/cart.js           购物车（localStorage，纯前端）
+    src/viewmode.js       移动版预览开关（localStorage）
     src/views/Login.vue   登录 / 注册（注册需审核）
     src/views/Admin.vue   后台：看板 / 商品录入 / 账号审核
   deploy/           服务器部署脚本
@@ -40,6 +41,8 @@ pj/
 - 价格按「分」存（`price_cents`），避免浮点误差。
 - 前台首页（v0.2.0 起）仿京东三栏：左分类（由商品自动汇总）、中轮播 + 格栅列表、右悬浮工具栏，顶部搜索。
 - PC 端（v0.2.2）：中间商品区独立滚动，左右两栏固定；商品用栅格 `auto-fill minmax(200px,1fr)`；每页 20 条。
+- 断点用**容器查询**（`.app { container-type: inline-size }`），不是视口媒体查询：这样同一套 CSS 既能服务真机，也能服务 390px 预览框。
+- 「移动版」按钮 = 手机预览（`viewmode.js` 存 localStorage），`Esc` 退出；真机 ≤500px 自动取消设备框。
 - 购物车**纯前端**（localStorage），不落库、不下单支付；首页右侧工具栏购物车项带件数角标，点击进 `/checkout`。
 - `featured` 标记的商品进首页轮播；管理员可切换。
 - 看板指标：商品总数、账号总数、累计登录次数、每个账号登录次数/最近登录/上架产品数、最近 50 条登录记录。
