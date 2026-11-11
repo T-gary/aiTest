@@ -34,6 +34,11 @@ const showTop = ref(false)
 const liveTucked = ref(false)
 let liveTimer = 0
 
+// 直播播放器（B 站外链，点击浮层后弹层播放）
+const LIVE_BVID = 'BV1eM8p6cEv2'
+const liveOpen = ref(false)
+const liveUrl = `https://player.bilibili.com/player.html?bvid=${LIVE_BVID}&page=1&autoplay=1&danmaku=0`
+
 // 领奖浮层
 const prizeClosed = ref(localStorage.getItem('prizeClosed') === '1')
 
@@ -358,7 +363,7 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- 直播浮层（左下角）：滚动时收进左侧，停止滚动后展开 -->
-    <button class="m-live" :class="{ tucked: liveTucked }" @click="scrollToFlash">
+    <button class="m-live" :class="{ tucked: liveTucked }" @click="liveOpen = true">
       <span class="m-live-screen">
         <img v-if="current?.image_url" :src="current.image_url" alt="" loading="lazy" />
         <svg class="m-live-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5l8 5.5-8 5.5z" /></svg>
@@ -366,5 +371,25 @@ onBeforeUnmount(() => {
       <span class="m-live-tag">直播</span>
       <span class="m-live-label">限时秒杀</span>
     </button>
+
+    <!-- 直播播放器弹层 -->
+    <div v-if="liveOpen" class="m-live-mask" @click.self="liveOpen = false">
+      <section class="m-live-panel">
+        <header>
+          <strong>限时秒杀 · 直播中</strong>
+          <button class="link" @click="liveOpen = false">关闭</button>
+        </header>
+        <div class="m-live-player">
+          <iframe
+            :src="liveUrl"
+            title="限时秒杀直播"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen
+            frameborder="0"
+          ></iframe>
+        </div>
+        <p class="muted small">视频来自 B 站 · {{ LIVE_BVID }}</p>
+      </section>
+    </div>
   </div>
 </template>
