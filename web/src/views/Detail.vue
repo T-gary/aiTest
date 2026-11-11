@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api'
 import { cart } from '../cart'
@@ -33,8 +33,32 @@ onMounted(async () => {
     error.value = e.message
   } finally {
     loading.value = false
+    startCountdown()
   }
 })
+
+// 本场结束倒计时：每天 24:00 结束，仅展示
+const now = ref(Date.now())
+let clock = 0
+
+const countdown = computed(() => {
+  const d = new Date(now.value)
+  const end = new Date(d)
+  end.setHours(24, 0, 0, 0)
+  let left = Math.max(0, Math.floor((end.getTime() - d.getTime()) / 1000))
+  const h = String(Math.floor(left / 3600)).padStart(2, '0')
+  left %= 3600
+  const m = String(Math.floor(left / 60)).padStart(2, '0')
+  const s = String(left % 60).padStart(2, '0')
+  return `${h} : ${m} : ${s}`
+})
+
+function startCountdown() {
+  clearInterval(clock)
+  clock = setInterval(() => (now.value = Date.now()), 1000)
+}
+
+onBeforeUnmount(() => clearInterval(clock))
 
 function plus() {
   if (!p.value) return
@@ -111,7 +135,7 @@ function addToCart() {
           <span class="dt-price">¥{{ p.price.toFixed(2) }}</span>
           <div class="dt-countdown">
             <span>距离本场结束还剩</span>
-            <em>01 : 41 : 07</em>
+            <em>{{ countdown }}</em>
           </div>
         </div>
 
