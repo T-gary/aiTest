@@ -34,24 +34,22 @@ const showTop = ref(false)
 const liveTucked = ref(false)
 let liveTimer = 0
 
-// 直播浮层关闭状态（记在本地，避免每次刷新都弹）
-const liveClosed = ref(localStorage.getItem('liveClosed') === '1')
+// 直播浮层关闭状态：只在本次进入首页时关闭，重新进入首页再次展示
+const liveClosed = ref(false)
 
 function closeLive() {
   liveClosed.value = true
-  localStorage.setItem('liveClosed', '1')
 }
 
 // 直播播放器（B 站外链，浮层内嵌入播放器自动播放）
 const LIVE_BVID = 'BV17iEU6mE8i'
 const LIVE_SRC = `https://player.bilibili.com/player.html?bvid=${LIVE_BVID}&page=1&autoplay=1&muted=1&danmaku=0&high_quality=1`
 
-// 领奖浮层
-const prizeClosed = ref(localStorage.getItem('prizeClosed') === '1')
+// 领奖浮层：同样只关闭本次
+const prizeClosed = ref(false)
 
 function closePrize() {
   prizeClosed.value = true
-  localStorage.setItem('prizeClosed', '1')
 }
 
 function scrollToFlash() {
