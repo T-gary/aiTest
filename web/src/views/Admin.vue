@@ -124,7 +124,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div class="adminpage">
     <div class="row" style="justify-content: space-between">
       <h1>后台</h1>
       <div class="row">

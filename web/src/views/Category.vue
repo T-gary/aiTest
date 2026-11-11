@@ -49,6 +49,24 @@ async function loadProducts() {
 function pick(name) {
   current.value = name
   loadProducts()
+  scrollCircleIntoView()
+}
+
+// 让圆形分类条跟随选中项滚动
+function scrollCircleIntoView() {
+  const row = document.querySelector('.cat-circle-row')
+  const active = row?.querySelector('.cat-circle.on')
+  if (!row || !active) return
+  const left = active.offsetLeft - row.clientWidth / 2 + active.offsetWidth / 2
+  row.scrollTo({ left: Math.max(0, left), behavior: 'smooth' })
+}
+
+// 鼠标滚轮 -> 横向滚动
+function onCircleWheel(e) {
+  const row = e.currentTarget
+  if (row.scrollWidth <= row.clientWidth) return
+  e.preventDefault()
+  row.scrollLeft += e.deltaY || e.deltaX
 }
 
 function search() {
@@ -60,7 +78,14 @@ function togglePrice() {
   loadProducts()
 }
 
+const circleExpanded = ref(false)
+
+function toggleCircles() {
+  circleExpanded.value = !circleExpanded.value
+}
+
 const banner = computed(() => featured.value[0])
+
 
 function sold(p) {
   return (((p.id * 137) % 90) / 10 + 1).toFixed(1)
@@ -89,8 +114,8 @@ onMounted(loadShell)
     </header>
 
     <!-- 圆形分类条 -->
-    <div class="cat-circles">
-      <div class="cat-circle-row">
+    <div class="cat-circles" :class="{ expanded: circleExpanded }">
+      <div class="cat-circle-row" @wheel.prevent="onCircleWheel">
         <button
           v-for="(c, i) in categories"
           :key="c.name"
@@ -102,7 +127,7 @@ onMounted(loadShell)
           <span class="cat-circle-label">{{ c.name }}</span>
         </button>
       </div>
-      <span class="cat-circle-more">展开</span>
+      <button class="cat-circle-more" @click="toggleCircles">{{ circleExpanded ? '收起' : '展开' }}</button>
     </div>
 
     <p v-if="error" class="error cat-err">{{ error }}</p>

@@ -53,7 +53,7 @@ watch(mobileView, (v) => document.documentElement.classList.toggle('in-phone', v
           </span>
         </nav>
       </header>
-      <main class="content" :class="{ 'with-rail': showRail }">
+      <main class="content with-rail">
         <RouterView />
       </main>
     </div>
