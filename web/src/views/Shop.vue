@@ -30,6 +30,10 @@ const hint = ref(0)
 // 回到顶部
 const showTop = ref(false)
 
+// 直播浮层：滚动时收起，停止滚动后展开
+const liveTucked = ref(false)
+let liveTimer = 0
+
 // 领奖浮层
 const prizeClosed = ref(localStorage.getItem('prizeClosed') === '1')
 
@@ -54,6 +58,15 @@ function onScroll(e) {
   const t = e.target
   const y = t === document || t === window ? window.scrollY || 0 : t.scrollTop || 0
   showTop.value = y > 400
+
+  // 直播浮层：滚动时收起，停 400ms 再展开
+  if (y > 40) {
+    liveTucked.value = true
+    clearTimeout(liveTimer)
+    liveTimer = setTimeout(() => (liveTucked.value = false), 400)
+  } else {
+    liveTucked.value = false
+  }
 }
 
 function backToTop() {
@@ -141,6 +154,7 @@ onBeforeUnmount(() => {
   clearInterval(timer)
   clearInterval(clock)
   clearInterval(hintTimer)
+  clearTimeout(liveTimer)
   const scroller = document.querySelector('.content')
   scroller?.removeEventListener('scroll', onScroll)
   window.removeEventListener('scroll', onScroll)
@@ -342,5 +356,15 @@ onBeforeUnmount(() => {
       </button>
       <button class="m-prize-close" aria-label="关闭" @click="closePrize">×</button>
     </div>
+
+    <!-- 直播浮层（左下角）：滚动时收进左侧，停止滚动后展开 -->
+    <button class="m-live" :class="{ tucked: liveTucked }" @click="scrollToFlash">
+      <span class="m-live-screen">
+        <img v-if="current?.image_url" :src="current.image_url" alt="" loading="lazy" />
+        <svg class="m-live-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5l8 5.5-8 5.5z" /></svg>
+      </span>
+      <span class="m-live-tag">直播</span>
+      <span class="m-live-label">限时秒杀</span>
+    </button>
   </div>
 </template>

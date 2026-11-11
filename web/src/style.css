@@ -674,7 +674,7 @@ th { color: var(--muted); font-weight: 500; }
 }
 
 /* ---------- 移动版（容器 ≤760px） ---------- */
-.m-top, .m-search, .m-catbar, .m-flash, .m-tabs, .backtop, .m-prize { display: none; }
+.m-top, .m-search, .m-catbar, .m-flash, .m-tabs, .backtop, .m-prize, .m-live { display: none; }
 
 @container (max-width: 760px) {
   .hdr { padding: 0 10px; gap: 8px; height: 44px; }
@@ -850,10 +850,28 @@ th { color: var(--muted); font-weight: 500; }
   .listhead { margin: 10px 0 8px; }
   .listhead h1 { font-size: 15px; }
 
-  /* 商品两列 */
-  .plist { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-  .plist li { border: 0; border-radius: 12px; }
+  /* 商品瀑布流（两列） */
+  .plist {
+    display: block;
+    column-count: 2;
+    column-gap: 8px;
+  }
+  .plist li {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 8px;
+    border: 0;
+    border-radius: 12px;
+    break-inside: avoid;
+  }
   .pthumb, .plist .thumb-ph { border-radius: 0; }
+  /* 图片高度错落，形成瀑布效果 */
+  .plist li:nth-child(3n + 1) .pthumb,
+  .plist li:nth-child(3n + 1) .thumb-ph { aspect-ratio: 3 / 4; }
+  .plist li:nth-child(3n + 2) .pthumb,
+  .plist li:nth-child(3n + 2) .thumb-ph { aspect-ratio: 1 / 1; }
+  .plist li:nth-child(3n) .pthumb,
+  .plist li:nth-child(3n) .thumb-ph { aspect-ratio: 4 / 3; }
   .pbody { padding: 8px 10px 10px; gap: 4px; }
   .pname { font-size: 13px; line-height: 1.35; }
   .pdesc { display: none; }
@@ -891,8 +909,7 @@ th { color: var(--muted); font-weight: 500; }
     bottom: 64px;
     z-index: 27;
     text-align: center;
-  }
-  .m-prize-main {
+  }  .m-prize-main {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -926,6 +943,63 @@ th { color: var(--muted); font-weight: 500; }
     font-size: 13px;
     line-height: 17px;
     border: 0;
+  }
+
+  /* 直播浮层（左下角） */
+  .m-live {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    position: fixed;
+    left: 10px;
+    bottom: 64px;
+    z-index: 27;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: #fff;
+    transition: transform .25s ease;
+    transform: translateX(0);
+  }
+  .m-live.tucked { transform: translateX(calc(-100% + 18px)); }
+  .m-live-screen {
+    position: relative;
+    width: 74px;
+    height: 98px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #1c2430;
+    box-shadow: 0 4px 14px rgba(16, 24, 40, .28);
+    display: block;
+  }
+  .m-live-screen img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .m-live-play {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 26px;
+    height: 26px;
+    fill: rgba(255, 255, 255, .92);
+    stroke: none;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .4));
+  }
+  .m-live-tag {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    background: #f5333f;
+    color: #fff;
+    font-size: 9px;
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+  .m-live-label {
+    font-size: 11px;
+    background: rgba(16, 24, 40, .6);
+    border-radius: 7px;
+    padding: 1px 6px;
+    white-space: nowrap;
   }
 
   /* 秒杀横滑：触控顺滑 + 隐藏滚动条 */
@@ -1279,6 +1353,13 @@ th { color: var(--muted); font-weight: 500; }
   left: 0;
   right: 0;
   bottom: 0;
+}
+
+/* 手机预览框内：直播浮层相对设备框定位 */
+.stage.phone .m-live {
+  position: absolute;
+  left: 10px;
+  bottom: 64px;
 }
 
 /* 手机预览框内：立即领奖浮层相对设备框定位 */
