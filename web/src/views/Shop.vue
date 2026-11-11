@@ -34,9 +34,17 @@ const showTop = ref(false)
 const liveTucked = ref(false)
 let liveTimer = 0
 
-// 直播播放器（直链 MP4，直接内嵌在左下角浮层里自动播放）
-const LIVE_SRC =
-  'https://sns-video-qc.xhscdn.com/stream/79/110/258/01eaefbcdc5db4e44f037001a1b87a4480_258.mp4?sign=f1b1287bd5498c9de1334e6ee54579a0&t=6af92b35'
+// 直播浮层关闭状态（记在本地，避免每次刷新都弹）
+const liveClosed = ref(localStorage.getItem('liveClosed') === '1')
+
+function closeLive() {
+  liveClosed.value = true
+  localStorage.setItem('liveClosed', '1')
+}
+
+// 直播播放器（B 站外链，浮层内嵌入播放器自动播放）
+const LIVE_BVID = 'BV1kdWn6ZEW4'
+const LIVE_SRC = `https://player.bilibili.com/player.html?bvid=${LIVE_BVID}&page=1&autoplay=1&muted=1&danmaku=0&high_quality=1`
 
 // 领奖浮层
 const prizeClosed = ref(localStorage.getItem('prizeClosed') === '1')
@@ -362,12 +370,20 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- 直播浮层（左下角）：视频内嵌自动播放，滚动时收进左侧，停止滚动后展开 -->
-    <div class="m-live" :class="{ tucked: liveTucked }">
+    <div v-if="!liveClosed" class="m-live" :class="{ tucked: liveTucked }">
       <span class="m-live-screen">
-        <video :src="LIVE_SRC" autoplay muted loop playsinline preload="auto"></video>
+        <iframe
+          :src="LIVE_SRC"
+          title="限时秒杀直播"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowfullscreen
+          frameborder="0"
+          scrolling="no"
+        ></iframe>
       </span>
       <span class="m-live-tag">直播</span>
       <span class="m-live-label">限时秒杀</span>
+      <button class="m-live-close" aria-label="关闭直播" @click.stop="closeLive">×</button>
     </div>
   </div>
 </template>

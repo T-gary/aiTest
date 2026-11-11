@@ -982,6 +982,18 @@ th { color: var(--muted); font-weight: 500; }
     display: block;
     background: #000;
   }
+  .m-live-screen iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 300%;
+    height: 300%;
+    transform: scale(0.3333);
+    transform-origin: 0 0;
+    border: 0;
+    display: block;
+    background: #000;
+  }
   .m-live-play {
     position: absolute;
     inset: 0;
@@ -1008,6 +1020,21 @@ th { color: var(--muted); font-weight: 500; }
     border-radius: 7px;
     padding: 1px 6px;
     white-space: nowrap;
+  }
+  .m-live-close {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    border-radius: 50%;
+    background: rgba(16, 24, 40, .72);
+    color: #fff;
+    font-size: 13px;
+    line-height: 17px;
+    border: 1px solid rgba(255, 255, 255, .5);
+    z-index: 2;
   }
 
   /* 秒杀横滑：触控顺滑 + 隐藏滚动条 */
