@@ -1202,6 +1202,9 @@ th { color: var(--muted); font-weight: 500; }
   .cart-settle { position: fixed; left: 0; right: 0; bottom: 53px; z-index: 31; }
 }
 
+/* 桌面端左侧菜单（移动版隐藏） */
+.pf-side { display: none; }
+
 /* ---------- 我的（Profile）页 ---------- */
 .profile {
   max-width: 480px;
@@ -1509,6 +1512,75 @@ th { color: var(--muted); font-weight: 500; }
 }
 .pf-link:last-child { border-bottom: 0; }
 .pf-link em { font-style: normal; color: var(--muted); }
+
+/* 桌面端（容器 >760px）：左侧菜单 + 右侧内容 */
+@container (min-width: 761px) {
+  .profile {
+    max-width: 1280px;
+    margin: 16px auto;
+    padding-bottom: 24px;
+    background: transparent;
+    display: grid;
+    grid-template-columns: 196px minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+    min-height: 0;
+  }
+
+  .pf-side {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 8px;
+    position: sticky;
+    top: 16px;
+  }
+  .pf-side button {
+    background: none;
+    border: 0;
+    text-align: left;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .pf-side button:hover { background: #f4f5f7; }
+  .pf-side button.on { background: #fdeceb; color: #e1251b; font-weight: 600; }
+
+  .pf-main { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+
+  .pf-top { padding: 0 4px; background: none; justify-content: flex-end; }
+  .pf-top .pf-review { display: none; }
+
+  .pf-user { margin: 0; padding: 16px 18px; }
+
+  .pf-user-row { gap: 14px; align-items: flex-start; }
+
+  /* 资产行放在用户卡右侧 */
+  .pf-stats { margin-top: 0; padding-top: 0; }
+
+  .pf-promos { margin-top: 16px; }
+  .pf-promo-mid { flex: 0 0 140px; }
+
+  .pf-quick, .pf-orders, .pf-cols, .pf-links { margin: 0; }
+
+  .pf-orders { grid-template-columns: repeat(6, 1fr); padding: 18px 8px; }
+  .pf-order { font-size: 12px; }
+  .pf-order-icon svg { width: 26px; height: 26px; }
+
+  .pf-cols { gap: 12px; }
+  .pf-col { padding: 14px; }
+  .pf-col h3 { font-size: 15px; }
+
+  .pf-links { display: flex; flex-wrap: wrap; }
+  .pf-link { flex: 1 1 30%; border-bottom: 0; border-right: 1px solid #f2f3f5; }
+  .pf-link:last-child { border-right: 0; }
+
+  /* 桌面端不显示移动版浮层 */
+  .pf-survey, .pf-survey-note { display: none !important; }
+}
 
 /* 参与调研浮层 */
 .pf-survey {

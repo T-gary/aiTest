@@ -320,12 +320,12 @@ onBeforeUnmount(() => {
           </span>
           <span class="raillabel">购物车</span>
         </RouterLink>
-        <span class="railitem off">
+        <RouterLink to="/profile" class="railitem" title="我的">
           <span class="railicon">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M8.5 13.5c1 1.4 2.3 1.4 3.5 1.4s2.5 0 3.5-1.4" /></svg>
           </span>
           <span class="raillabel">我的</span>
-        </span>
+        </RouterLink>
         <span class="railitem off">
           <span class="railicon">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13a7 7 0 0 1 14 0" /><rect x="3" y="13" width="3.5" height="5.5" rx="1.7" /><rect x="17.5" y="13" width="3.5" height="5.5" rx="1.7" /><path d="M19.2 18.5c0 1.6-1.6 2.5-3.7 2.5" /></svg>

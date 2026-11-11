@@ -40,6 +40,21 @@ function goOrder() {
 
 <template>
   <div class="profile">
+    <!-- 桌面端左侧菜单 -->
+    <aside class="pf-side">
+      <button class="on">我的京东</button>
+      <button>订单中心</button>
+      <button>我的钱包</button>
+      <button>账户设置</button>
+      <button>足迹收藏</button>
+      <button>客户服务</button>
+      <button>我的活动</button>
+      <button>特色业务</button>
+      <button>生活服务</button>
+      <button>其他业务</button>
+    </aside>
+
+    <div class="pf-main">
     <!-- 顶部 -->
     <header class="pf-top">
       <span class="pf-review">
@@ -194,6 +209,7 @@ function goOrder() {
         <em>›</em>
       </RouterLink>
     </section>
+    </div>
 
     <MTabs />
 
