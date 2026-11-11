@@ -111,10 +111,6 @@ function go(p) {
   loadProducts()
 }
 
-function scrollToCats() {
-  document.querySelector('.m-cats')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-}
-
 const current = computed(() => featured.value[slide.value % (featured.value.length || 1)])
 
 // 秒杀倒计时：整点结束，仅展示
@@ -161,24 +157,39 @@ onBeforeUnmount(() => {
       </div>
     </header>
 
-    <!-- 移动版头部：定位 + 搜索 + 扫码 -->
-    <div class="m-head">
-      <span class="m-loc">北京<em>⌄</em></span>
-      <div class="m-search">
-        <input v-model="q" :placeholder="hints[hint % hints.length]" @keyup.enter="search" />
+    <!-- 移动版顶部：红色 tabs + 搜索 + 横向分类 -->
+    <header class="m-top">
+      <nav class="m-top-tabs">
+        <button>特价</button>
+        <button class="on">首页</button>
+        <button>秒送<em>外卖</em></button>
+        <button>新品</button>
+      </nav>
+      <div class="m-top-promo">3C新品<br />换新0元购</div>
+    </header>
 
-        <button @click="search" aria-label="搜索">
-          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" /><path d="M16 16l4.5 4.5" /></svg>
-        </button>
+    <div class="m-search">
+      <div class="m-search-bar">
+        <span class="m-scan">
+          <svg viewBox="0 0 24 24"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16" /><path d="M3 12h18" /></svg>
+        </span>
+        <input v-model="q" :placeholder="hints[hint % hints.length]" @keyup.enter="search" />
+        <button class="m-search-btn" @click="search">搜索</button>
       </div>
     </div>
 
-    <!-- 移动版服务条 -->
-    <div class="m-service">
-      <span>免费包送</span>
-      <span>严格安检</span>
-      <span>包退包赔</span>
-    </div>
+    <nav class="m-catbar">
+      <button class="m-catbar-static">关注</button>
+      <button :class="{ on: !category }" @click="pick('')">推荐</button>
+      <button class="m-catbar-static">国家补贴</button>
+      <button
+        v-for="c in cats"
+        :key="c.name"
+        :class="{ on: category === c.name }"
+        @click="pick(c.name)"
+      >{{ c.name }}</button>
+      <span class="m-catbar-more">≡</span>
+    </nav>
 
     <p v-if="error" class="error">{{ error }}</p>
 
@@ -192,18 +203,6 @@ onBeforeUnmount(() => {
         </button>
         <p v-if="!cats.length" class="muted small">暂无分类，录入商品时填写「分类」即可出现在这里。</p>
       </aside>
-
-      <!-- 移动版分类宫格 -->
-      <div class="m-cats">
-        <button :class="{ on: !category }" @click="pick('')">
-          <span class="m-cat-icon all">全</span>
-          <span class="m-cat-label">全部</span>
-        </button>
-        <button v-for="(c, i) in cats" :key="c.name" :class="{ on: category === c.name }" @click="pick(c.name)">
-          <span class="m-cat-icon" :class="'tone-' + (i % 6)">{{ c.name.slice(0, 1) }}</span>
-          <span class="m-cat-label">{{ c.name }}</span>
-        </button>
-      </div>
 
       <section class="main">
         <div class="banner" :style="current?.image_url ? { backgroundImage: `url(${current.image_url})` } : {}">

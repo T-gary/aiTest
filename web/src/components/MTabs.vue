@@ -10,7 +10,7 @@ const router = useRouter()
 const user = computed(() => auth.user())
 
 function goCats() {
-  if (route.path === '/') document.querySelector('.m-cats')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  if (route.path === '/') document.querySelector('.m-catbar')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   else router.push('/')
 }
 </script>
