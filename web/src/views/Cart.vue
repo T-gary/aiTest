@@ -107,6 +107,11 @@ function clearAll() {
       <!-- 底部结算 -->
       <footer class="dc-settle">
         <div class="dc-settle-left">
+          <label class="dcheck">
+            <input type="checkbox" :checked="cart.allChecked.value" @change="cart.toggleAll($event.target.checked)" />
+            <span class="dcheck-box"></span>
+            <span class="dcheck-label">全选</span>
+          </label>
           <span class="muted">已选 {{ checkedCount }} 种 / {{ checkedPieces }} 件</span>
           <button class="link" @click="cart.clear()">清空</button>
         </div>

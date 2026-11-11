@@ -2077,8 +2077,7 @@ th { color: var(--muted); font-weight: 500; }
 .dt-buy { background: #f5333f; color: #fff; }
 
 /* ---------- 商品详情页 · PC 版（默认隐藏，容器 >760px 生效） ---------- */
-.dt-pc,
-.dt-rail { display: none; }
+.dt-pc { display: none; }
 
 @container (min-width: 761px) {
   .detail {
@@ -2091,15 +2090,6 @@ th { color: var(--muted); font-weight: 500; }
 
   .dt-m { display: none; }
   .dt-pc { display: block; }
-
-  .dt-rail {
-    display: flex;
-    position: fixed;
-    right: 16px;
-    top: 32%;
-    width: 62px;
-    z-index: 20;
-  }
 
   /* 面包屑 */
   .dt-crumb {

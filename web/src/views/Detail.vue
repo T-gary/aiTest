@@ -3,7 +3,6 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api'
 import { cart } from '../cart'
-import { mobileView } from '../viewmode'
 
 const route = useRoute()
 const router = useRouter()
@@ -348,38 +347,5 @@ const oldPrice = computed(() => (p.value ? (p.value.price * 1.3).toFixed(2) : '0
         </section>
       </template>
     </div>
-
-    <!-- PC 右侧悬浮工具栏 -->
-    <aside class="dt-rail rail">
-      <RouterLink to="/" class="railitem" title="首页">
-        <span class="railicon">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7" /><path d="M6 10v9h12v-9" /></svg>
-        </span>
-        <span class="raillabel">首页</span>
-      </RouterLink>
-      <RouterLink to="/checkout" class="railitem" title="购物车">
-        <span class="railicon">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M3 4h2.2l2 10.5h10.2L20 7H6.1" />
-            <circle cx="9.5" cy="19" r="1.6" />
-            <circle cx="17" cy="19" r="1.6" />
-          </svg>
-          <em v-if="cart.count.value" class="badge">{{ cart.count.value > 99 ? '99+' : cart.count.value }}</em>
-        </span>
-        <span class="raillabel">购物车</span>
-      </RouterLink>
-      <RouterLink to="/profile" class="railitem" title="我的">
-        <span class="railicon">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M8.5 13.5c1 1.4 2.3 1.4 3.5 1.4s2.5 0 3.5-1.4" /></svg>
-        </span>
-        <span class="raillabel">我的</span>
-      </RouterLink>
-      <button class="railitem" title="切换到移动版预览" @click="mobileView = true">
-        <span class="railicon">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2" /><path d="M10.5 5h3M11 18.5h2" /></svg>
-        </span>
-        <span class="raillabel">移动版</span>
-      </button>
-    </aside>
   </div>
 </template>
