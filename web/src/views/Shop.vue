@@ -10,6 +10,7 @@ const page = ref(1)
 const size = ref(20)
 const pages = ref(1)
 const q = ref('')
+const searchTerm = ref('')
 const category = ref('')
 const cats = ref([])
 const featured = ref([])
@@ -18,13 +19,35 @@ const loading = ref(false)
 const error = ref('')
 
 let timer = 0
+let clock = 0
+let hintTimer = 0
+
+// 搜索框 placeholder 轮播：优先用真实分类名，保证搜得到
+const fallbackHints = ['水果', '家电', '键盘', '耳机']
+const hints = computed(() => (cats.value.length ? cats.value.map((c) => c.name) : fallbackHints))
+const hint = ref(0)
+
+// 回到顶部
+const showTop = ref(false)
+
+function onScroll(e) {
+  const t = e.target
+  const y = t === document || t === window ? window.scrollY || 0 : t.scrollTop || 0
+  showTop.value = y > 400
+}
+
+function backToTop() {
+  const el = document.querySelector('.content')
+  if (el && el.scrollHeight > el.clientHeight) el.scrollTo({ top: 0, behavior: 'smooth' })
+  else window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 async function loadProducts() {
   loading.value = true
   error.value = ''
   try {
     const p = new URLSearchParams({ page: page.value, size: size.value })
-    if (q.value.trim()) p.set('q', q.value.trim())
+    if (searchTerm.value.trim()) p.set('q', searchTerm.value.trim())
     if (category.value) p.set('category', category.value)
     const data = await api(`/products?${p}`)
     items.value = data.items
@@ -48,12 +71,17 @@ async function loadShell() {
 }
 
 function search() {
-  if (page.value === 1) loadProducts()
-  else page.value = 1
+  // 输入框为空：用当前轮播文字搜索；搜完清空输入框，方便连续点
+  searchTerm.value = q.value.trim() || hints.value[hint.value % hints.value.length]
+  q.value = ''
+  page.value = 1
+  loadProducts()
 }
 
 function pick(name) {
   category.value = name
+  searchTerm.value = ''
+  q.value = ''
   page.value = 1
   loadProducts()
 }
@@ -79,7 +107,6 @@ const flashTime = computed(() => {
   const s = String(Math.floor((left % 60000) / 1000)).padStart(2, '0')
   return `00:${m}:${s}`
 })
-let clock = 0
 
 onMounted(() => {
   loadShell()
@@ -88,11 +115,20 @@ onMounted(() => {
     if (featured.value.length > 1) slide.value = (slide.value + 1) % featured.value.length
   }, 4000)
   clock = setInterval(() => (now.value = Date.now()), 1000)
+  hintTimer = setInterval(() => (hint.value = (hint.value + 1) % hints.value.length), 3000)
+
+  const scroller = document.querySelector('.content')
+  scroller?.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('scroll', onScroll, { passive: true })
 })
 
 onBeforeUnmount(() => {
   clearInterval(timer)
   clearInterval(clock)
+  clearInterval(hintTimer)
+  const scroller = document.querySelector('.content')
+  scroller?.removeEventListener('scroll', onScroll)
+  window.removeEventListener('scroll', onScroll)
 })
 </script>
 
@@ -110,7 +146,8 @@ onBeforeUnmount(() => {
     <div class="m-head">
       <span class="m-loc">北京<em>⌄</em></span>
       <div class="m-search">
-        <input v-model="q" placeholder="搜索商品" @keyup.enter="search" />
+        <input v-model="q" :placeholder="hints[hint % hints.length]" @keyup.enter="search" />
+
         <button @click="search" aria-label="搜索">
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" /><path d="M16 16l4.5 4.5" /></svg>
         </button>
@@ -183,7 +220,7 @@ onBeforeUnmount(() => {
         </div>
 
         <div class="listhead">
-          <h1>{{ category || '今日上新' }}</h1>
+          <h1>{{ searchTerm || category || '今日上新' }}</h1>
           <span class="muted">共 {{ total }} 件</span>
         </div>
 
@@ -287,5 +324,10 @@ onBeforeUnmount(() => {
         <span>我的</span>
       </RouterLink>
     </nav>
+
+    <!-- 回到顶部 -->
+    <button v-show="showTop" class="backtop" aria-label="回到顶部" @click="backToTop">
+      <svg viewBox="0 0 24 24"><path d="M12 19V6M6 11.5L12 5.5l6 6" /></svg>
+    </button>
   </div>
 </template>

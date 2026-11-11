@@ -197,7 +197,7 @@ const PRODUCT_SELECT: &str = "SELECT p.id, p.name, p.price_cents, p.image_url, p
      FROM products p LEFT JOIN users u ON u.id = p.created_by";
 
 const PRODUCT_FILTER: &str =
-    "WHERE (? = '' OR p.name LIKE ?) AND (? = '' OR p.category = ?) AND (? = 0 OR p.featured = 1)";
+    "WHERE (? = '' OR p.name LIKE ? OR p.category LIKE ?) AND (? = '' OR p.category = ?) AND (? = 0 OR p.featured = 1)";
 
 async fn list_products(State(a): State<App>, Query(p): Query<Page>) -> Ok<Json<serde_json::Value>> {
     let page = p.page.unwrap_or(1).max(1);
@@ -211,6 +211,7 @@ async fn list_products(State(a): State<App>, Query(p): Query<Page>) -> Ok<Json<s
     let total: i64 = sqlx::query_scalar(&format!("SELECT COUNT(*) FROM products p {PRODUCT_FILTER}"))
         .bind(q)
         .bind(&like)
+        .bind(&like)
         .bind(&category)
         .bind(&category)
         .bind(featured)
@@ -220,6 +221,7 @@ async fn list_products(State(a): State<App>, Query(p): Query<Page>) -> Ok<Json<s
     let sql = format!("{PRODUCT_SELECT} {PRODUCT_FILTER} ORDER BY p.id DESC LIMIT ? OFFSET ?");
     let rows: Vec<ProductRow> = sqlx::query_as(&sql)
         .bind(q)
+        .bind(&like)
         .bind(&like)
         .bind(&category)
         .bind(&category)
