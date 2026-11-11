@@ -30,6 +30,9 @@ const hint = ref(0)
 // 回到顶部
 const showTop = ref(false)
 
+// 消息面板
+const msgOpen = ref(false)
+
 function onScroll(e) {
   const t = e.target
   const y = t === document || t === window ? window.scrollY || 0 : t.scrollTop || 0
@@ -314,6 +317,10 @@ onBeforeUnmount(() => {
         <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1" /><rect x="13" y="4" width="7" height="7" rx="1" /><rect x="4" y="13" width="7" height="7" rx="1" /><rect x="13" y="13" width="7" height="7" rx="1" /></svg>
         <span>分类</span>
       </button>
+      <button @click="msgOpen = true">
+        <svg viewBox="0 0 24 24"><path d="M4 5.5h16v11H9l-5 4v-15z" /></svg>
+        <span>消息</span>
+      </button>
       <RouterLink to="/checkout">
         <svg viewBox="0 0 24 24"><path d="M3 4h2.2l2 10.5h10.2L20 7H6.1" /><circle cx="9.5" cy="19" r="1.6" /><circle cx="17" cy="19" r="1.6" /></svg>
         <span>购物车</span>
@@ -329,5 +336,16 @@ onBeforeUnmount(() => {
     <button v-show="showTop" class="backtop" aria-label="回到顶部" @click="backToTop">
       <svg viewBox="0 0 24 24"><path d="M12 19V6M6 11.5L12 5.5l6 6" /></svg>
     </button>
+
+    <!-- 消息面板 -->
+    <div v-if="msgOpen" class="m-sheet-mask" @click="msgOpen = false">
+      <section class="m-sheet" @click.stop>
+        <header>
+          <h3>消息</h3>
+          <button class="link" @click="msgOpen = false">关闭</button>
+        </header>
+        <p class="muted">暂无消息。下单、审核等通知会出现在这里。</p>
+      </section>
+    </div>
   </div>
 </template>

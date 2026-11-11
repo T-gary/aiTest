@@ -416,7 +416,7 @@ th { color: var(--muted); font-weight: 500; }
 }
 
 /* ---------- 移动版（容器 ≤760px） ---------- */
-.m-head, .m-service, .m-cats, .m-flash, .m-tabs, .backtop { display: none; }
+.m-head, .m-service, .m-cats, .m-flash, .m-tabs, .backtop, .m-sheet-mask { display: none; }
 
 @container (max-width: 760px) {
   .hdr { padding: 0 10px; gap: 8px; height: 44px; }
@@ -617,7 +617,7 @@ th { color: var(--muted); font-weight: 500; }
   /* 底部导航 */
   .m-tabs {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     position: sticky;
     bottom: 0;
     z-index: 30;
@@ -686,6 +686,33 @@ th { color: var(--muted); font-weight: 500; }
     stroke-linejoin: round;
   }
 
+  /* 消息面板 */
+  .m-sheet-mask {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: rgba(16, 24, 40, .38);
+  }
+  .m-sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #fff;
+    border-radius: 16px 16px 0 0;
+    padding: 14px 16px calc(20px + env(safe-area-inset-bottom));
+    box-shadow: 0 -6px 24px rgba(16, 24, 40, .16);
+  }
+  .m-sheet header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .m-sheet h3 { margin: 0; font-size: 15px; }
+  .m-sheet p { margin: 0; font-size: 13px; line-height: 1.6; }
+
   table { font-size: 12px; }
   th, td { padding: 6px; }
 
@@ -701,6 +728,11 @@ th { color: var(--muted); font-weight: 500; }
   .sumbar .row { justify-content: space-between; }
   .checkout { padding: 12px; }
   .checkout h1 { font-size: 18px; }
+}
+
+/* 手机预览框内：消息面板相对设备框定位 */
+.stage.phone .m-sheet-mask {
+  position: absolute;
 }
 
 /* 手机预览框内：回到顶部相对设备框定位 */
