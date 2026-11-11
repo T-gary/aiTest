@@ -2,7 +2,6 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth } from '../api'
-import { cart } from '../cart'
 import MTabs from '../components/MTabs.vue'
 
 const router = useRouter()
@@ -47,6 +46,10 @@ function goOrder() {
       <button>我的钱包</button>
       <button>账户设置</button>
       <button>足迹收藏</button>
+      <RouterLink to="/messages" class="pf-side-link">消息中心</RouterLink>
+      <RouterLink :to="user ? '/admin' : '/login'" class="pf-side-link">
+        {{ user?.is_admin ? '进入后台管理' : '我的商品' }}
+      </RouterLink>
       <button>客户服务</button>
       <button>我的活动</button>
       <button>特色业务</button>
@@ -194,7 +197,7 @@ function goOrder() {
       </div>
     </section>
 
-    <!-- 我的商品/管理入口 -->
+    <!-- 移动版：功能入口（桌面端已移入左侧菜单） -->
     <section class="pf-links">
       <RouterLink :to="user ? '/admin' : '/login'" class="pf-link">
         <span>{{ user?.is_admin ? '进入后台管理' : '我的商品' }}</span>
@@ -202,10 +205,6 @@ function goOrder() {
       </RouterLink>
       <RouterLink to="/messages" class="pf-link">
         <span>消息中心</span>
-        <em>›</em>
-      </RouterLink>
-      <RouterLink to="/checkout" class="pf-link">
-        <span>购物车（{{ cart.count.value }} 种商品）</span>
         <em>›</em>
       </RouterLink>
     </section>
