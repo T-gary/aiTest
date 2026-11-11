@@ -34,10 +34,9 @@ const showTop = ref(false)
 const liveTucked = ref(false)
 let liveTimer = 0
 
-// 直播播放器（直链 MP4，点击浮层后弹层播放）
+// 直播播放器（直链 MP4，直接内嵌在左下角浮层里自动播放）
 const LIVE_SRC =
   'https://sns-video-qc.xhscdn.com/stream/79/110/258/01eaefbcdc5db4e44f037001a1b87a4480_258.mp4?sign=f1b1287bd5498c9de1334e6ee54579a0&t=6af92b35'
-const liveOpen = ref(false)
 
 // 领奖浮层
 const prizeClosed = ref(localStorage.getItem('prizeClosed') === '1')
@@ -362,28 +361,13 @@ onBeforeUnmount(() => {
       <button class="m-prize-close" aria-label="关闭" @click="closePrize">×</button>
     </div>
 
-    <!-- 直播浮层（左下角）：滚动时收进左侧，停止滚动后展开 -->
-    <button class="m-live" :class="{ tucked: liveTucked }" @click="liveOpen = true">
+    <!-- 直播浮层（左下角）：视频内嵌自动播放，滚动时收进左侧，停止滚动后展开 -->
+    <div class="m-live" :class="{ tucked: liveTucked }">
       <span class="m-live-screen">
-        <img v-if="current?.image_url" :src="current.image_url" alt="" loading="lazy" />
-        <svg class="m-live-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5l8 5.5-8 5.5z" /></svg>
+        <video :src="LIVE_SRC" autoplay muted loop playsinline preload="auto"></video>
       </span>
       <span class="m-live-tag">直播</span>
       <span class="m-live-label">限时秒杀</span>
-    </button>
-
-    <!-- 直播播放器弹层 -->
-    <div v-if="liveOpen" class="m-live-mask" @click.self="liveOpen = false">
-      <section class="m-live-panel">
-        <header>
-          <strong>限时秒杀 · 直播中</strong>
-          <button class="link" @click="liveOpen = false">关闭</button>
-        </header>
-        <div class="m-live-player">
-          <video :src="LIVE_SRC" controls autoplay muted playsinline preload="metadata"></video>
-        </div>
-        <p class="muted small">视频来自小红书 · 限时秒杀</p>
-      </section>
     </div>
   </div>
 </template>
