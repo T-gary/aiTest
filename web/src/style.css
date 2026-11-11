@@ -1536,6 +1536,178 @@ th { color: var(--muted); font-weight: 500; }
 }
 .pf-survey-note button.link { color: #ffd98a; font-size: 12px; }
 
+/* ---------- 分类（Category）页 ---------- */
+.catpage {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #f4f5f7;
+  padding-bottom: 64px;
+}
+
+.cat-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px 12px;
+  background: linear-gradient(180deg, #7ed17e, #5db85d);
+}
+
+.cat-search {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  background: #fff;
+  border-radius: 17px;
+}
+.cat-search svg { width: 16px; height: 16px; fill: none; stroke: #9aa7b8; stroke-width: 1.8; stroke-linecap: round; flex: 0 0 16px; }
+.cat-search input { flex: 1; min-width: 0; border: 0; background: none; padding: 0; font-size: 13px; outline: 0; }
+
+.cat-cart {
+  position: relative;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .25);
+  display: grid;
+  place-items: center;
+}
+.cat-cart svg { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 1.7; stroke-linecap: round; }
+.cat-cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: #f5333f;
+  color: #fff;
+  font-style: normal;
+  font-size: 10px;
+  line-height: 15px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.cat-switch {
+  display: flex;
+  justify-content: center;
+  gap: 34px;
+  background: #5db85d;
+  padding: 0 0 10px;
+}
+.cat-switch button {
+  position: relative;
+  background: none;
+  border: 0;
+  padding: 4px 0 8px;
+  font-size: 17px;
+  color: rgba(255, 255, 255, .82);
+}
+.cat-switch button.on { color: #fff; font-weight: 700; }
+.cat-switch button.on::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 26px;
+  height: 3px;
+  border-radius: 2px;
+  background: #fff;
+}
+
+.cat-body { display: flex; min-height: calc(100vh - 150px); }
+
+.cat-side {
+  flex: 0 0 96px;
+  background: #eef0f3;
+  display: flex;
+  flex-direction: column;
+}
+.cat-side button {
+  background: none;
+  border: 0;
+  padding: 16px 6px;
+  font-size: 13px;
+  color: #5b6472;
+  text-align: center;
+  line-height: 1.3;
+}
+.cat-side button.on { background: #fff; color: var(--text); font-weight: 600; }
+
+.cat-list { flex: 1; min-width: 0; background: #fff; }
+.cat-list ul { list-style: none; margin: 0; padding: 0; }
+.cat-tip { padding: 24px 12px; text-align: center; }
+
+.cat-row {
+  display: flex;
+  gap: 10px;
+  padding: 12px 10px;
+  border-bottom: 1px solid #f4f5f7;
+}
+.cat-row img, .cat-thumb-ph {
+  width: 76px;
+  height: 76px;
+  flex: 0 0 76px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #eef1f6;
+}
+.cat-thumb-ph { display: grid; place-items: center; font-size: 12px; color: var(--muted); }
+
+.cat-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.cat-name { font-size: 14px; font-weight: 600; line-height: 1.35; }
+.cat-desc {
+  font-size: 11px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cat-price-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; margin-top: 2px; }
+.cat-price { font-size: 16px; font-weight: 700; color: #f5333f; }
+.cat-sold { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+.cat-actions { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; }
+.cat-qty { min-width: 18px; text-align: center; font-size: 13px; }
+.cat-add, .cat-plus {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 50%;
+  background: #5db85d;
+  font-size: 0;
+  position: relative;
+}
+.cat-add::after, .cat-plus::after {
+  content: "+";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 17px;
+  line-height: 1;
+}
+.cat-minus {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #dfe2e8;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1;
+}
+.cat-err { padding: 10px 12px; }
+
 /* ---------- 消息页（移动版） ---------- */
 .msgs {
   max-width: 480px;

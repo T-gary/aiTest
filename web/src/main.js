@@ -7,6 +7,7 @@ import Admin from './views/Admin.vue'
 import Checkout from './views/Checkout.vue'
 import Messages from './views/Messages.vue'
 import Profile from './views/Profile.vue'
+import Category from './views/Category.vue'
 import './style.css'
 
 const router = createRouter({
@@ -17,7 +18,8 @@ const router = createRouter({
     { path: '/admin', component: Admin },
     { path: '/checkout', component: Checkout },
     { path: '/messages', component: Messages },
-    { path: '/profile', component: Profile }
+    { path: '/profile', component: Profile },
+    { path: '/category', component: Category }
   ]
 })
 

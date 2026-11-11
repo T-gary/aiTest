@@ -1,15 +1,9 @@
 <script setup>
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { cart } from '../cart'
 import { messageState } from '../messages'
 
 const route = useRoute()
-const router = useRouter()
-
-function goCats() {
-  if (route.path === '/') document.querySelector('.m-catbar')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  else router.push('/')
-}
 </script>
 
 <template>
@@ -18,10 +12,10 @@ function goCats() {
       <svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8.5H4V11z" /></svg>
       <span>首页</span>
     </RouterLink>
-    <button @click="goCats">
+    <RouterLink to="/category" :class="{ on: route.path === '/category' }">
       <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1" /><rect x="13" y="4" width="7" height="7" rx="1" /><rect x="4" y="13" width="7" height="7" rx="1" /><rect x="13" y="13" width="7" height="7" rx="1" /></svg>
       <span>分类</span>
-    </button>
+    </RouterLink>
     <RouterLink to="/messages" :class="{ on: route.path === '/messages' }">
       <svg viewBox="0 0 24 24"><path d="M4 5.5h16v11H9l-5 4v-15z" /></svg>
       <span>消息</span>
