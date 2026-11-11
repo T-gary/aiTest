@@ -25,6 +25,9 @@ pj/
   web/              Vue3 前端
     src/views/Shop.vue    前台：顶部搜索 + 左分类 / 中轮播+列表 / 右悬浮工具栏
     src/views/Checkout.vue 结算页：购物车明细 + 合计
+    src/views/Messages.vue 消息页（移动版）
+    src/components/MTabs.vue 移动版底部导航（首页/分类/消息/购物车/我的）
+    src/messages.js       消息未读数（localStorage 演示）
     src/cart.js           购物车（localStorage，纯前端）
     src/viewmode.js       移动版预览开关（localStorage）
     src/views/Login.vue   登录 / 注册（注册需审核）
@@ -44,6 +47,7 @@ pj/
 - 断点用**容器查询**（`.app { container-type: inline-size }`），不是视口媒体查询：这样同一套 CSS 既能服务真机，也能服务 390px 预览框。
 - 「移动版」按钮 = 手机预览（`viewmode.js` 存 localStorage），`Esc` 退出；真机 ≤500px 自动取消设备框。
 - 移动版首页参考墨刀「生鲜项目」原型：`m-head` / `m-service` / `m-cats` / `m-flash` / `plist` / `m-tabs`，桌面组件在容器查询里 `display:none`。
+- 消息页 `/messages` 参考京东消息页：红色头部 + 5 入口 + 筛选 + 列表 + 推荐栅格；未读数是 localStorage 演示值，没有后端消息表。
 - 购物车**纯前端**（localStorage），不落库、不下单支付；首页右侧工具栏购物车项带件数角标，点击进 `/checkout`。
 - `featured` 标记的商品进首页轮播；管理员可切换。
 - 看板指标：商品总数、账号总数、累计登录次数、每个账号登录次数/最近登录/上架产品数、最近 50 条登录记录。

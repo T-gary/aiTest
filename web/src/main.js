@@ -5,6 +5,7 @@ import Shop from './views/Shop.vue'
 import Login from './views/Login.vue'
 import Admin from './views/Admin.vue'
 import Checkout from './views/Checkout.vue'
+import Messages from './views/Messages.vue'
 import './style.css'
 
 const router = createRouter({
@@ -13,7 +14,8 @@ const router = createRouter({
     { path: '/', component: Shop },
     { path: '/login', component: Login },
     { path: '/admin', component: Admin },
-    { path: '/checkout', component: Checkout }
+    { path: '/checkout', component: Checkout },
+    { path: '/messages', component: Messages }
   ]
 })
 
