@@ -1,8 +1,12 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { cart } from '../cart'
+import { useRoute, useRouter } from 'vue-router'
+import { cart, placeOrder } from '../cart'
+import { auth } from '../api'
 import MTabs from '../components/MTabs.vue'
 
+const route = useRoute()
+const router = useRouter()
 const filter = ref('全部')
 const filters = [
   { name: '全部' },
@@ -14,6 +18,28 @@ const chips = ['国家补贴', '惊喜红包', '降价', '多买多返', '分组
 
 const checkedCount = computed(() => cart.checkedCount.value)
 const checkedPieces = computed(() => cart.checkedPieces.value)
+
+const busy = ref(false)
+const error = ref('')
+const done = ref(null)
+
+async function settle() {
+  if (!checkedCount.value || busy.value) return
+  if (!auth.token()) {
+    router.push({ path: '/login', query: { redirect: '/checkout' } })
+    return
+  }
+  busy.value = true
+  error.value = ''
+  try {
+    done.value = await placeOrder()
+  } catch (e) {
+    error.value = e.message
+    if (!auth.token()) router.push({ path: '/login', query: { redirect: '/checkout' } })
+  } finally {
+    busy.value = false
+  }
+}
 </script>
 
 <template>
@@ -103,10 +129,23 @@ const checkedPieces = computed(() => cart.checkedPieces.value)
         </div>
         <div class="muted small">已选 {{ checkedPieces }} 件</div>
       </div>
-      <button class="settle-btn" disabled title="演示项目，不支持下单支付">去结算({{ checkedCount }})</button>
+      <button
+        class="settle-btn"
+        :disabled="!checkedCount || busy"
+        :title="checkedCount ? '' : '请先勾选商品'"
+        @click="settle"
+      >
+        {{ busy ? '提交中…' : `去结算(${checkedCount})` }}
+      </button>
     </div>
 
-    <p class="muted small cart-tip">演示项目：购物车只存在本机浏览器，不支持下单和支付。</p>
+    <p v-if="error" class="error cart-tip">{{ error }}</p>
+    <p v-if="done" class="notice cart-tip">
+      下单成功，订单号 #{{ done.id }}，合计 ¥{{ done.total.toFixed(2) }}
+      <RouterLink to="/orders" class="link">查看订单</RouterLink>
+    </p>
+
+    <p class="muted small cart-tip">结算需登录；购物车本身存在本机浏览器，支付为模拟，不接真实支付。</p>
 
     <MTabs />
   </div>

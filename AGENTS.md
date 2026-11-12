@@ -27,6 +27,7 @@ pj/
     src/components/SideRail.vue 全局右侧悬浮工具栏（/admin 除外）
     src/views/Checkout.vue 结算页：移动版购物车
     src/views/Cart.vue    桌面版购物车（/cart）
+    src/views/Orders.vue  我的订单（/orders，需登录）
     src/views/Messages.vue 消息页（移动版）
     src/views/Profile.vue  我的页（移动版个人中心）
     src/views/Category.vue 分类页（移动版）
@@ -55,7 +56,8 @@ pj/
 - 切换版本时跳到等价页面：`/cart` ↔ `/checkout`，移动版 `/category` 退出时回 `/`（`App.vue` 里 `toMobileRoute` / `toDesktopRoute`）。
 - 移动版首页参考墨刀「生鲜项目」原型：`m-head` / `m-service` / `m-cats` / `m-flash` / `plist` / `m-tabs`，桌面组件在容器查询里 `display:none`。
 - 消息页 `/messages` 参考京东消息页：红色头部 + 5 入口 + 筛选 + 列表 + 推荐栅格；未读数是 localStorage 演示值，没有后端消息表。
-- 购物车**纯前端**（localStorage），不落库、不下单支付；右侧全局工具栏购物车项带件数角标，点击进 `/cart`（桌面版）。
+- 购物车**纯前端**（localStorage），不落库；下单走后端 `orders` / `order_items`，价格以库里为准，支付仍是模拟（无第三方支付）。
+  - 待办：购物车若要跨设备同步，再新增 `cart` 表。
 - 桌面购物车 `/cart` 与移动购物车 `/checkout` 是**两个页面**，共用同一份 localStorage；移动版底部 tab 指向 `/checkout`，桌面工具栏指向 `/cart`。
 - 购物车勾选状态也存 localStorage（每项 `checked` 字段），合计/结算数只算勾选项。
 - `featured` 标记的商品进首页轮播；管理员可切换。
@@ -73,4 +75,5 @@ pj/
 
 - [ ] 部署脚本根据服务器实际可用的 SSH 通道补全。
 - [ ] 管理员改密码接口（当前无）。
-- [ ] 购物车若要做成真下单，需要新增 cart / orders 表（当前刻意不做）。
+- [ ] 购物车跨设备同步需要新增 `cart` 表（当前刻意不做）。
+- [x] 下单闭环：`orders` / `order_items` + `POST/GET /api/orders` + `/orders` 页（v0.8.0）。

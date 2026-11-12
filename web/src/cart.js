@@ -1,4 +1,5 @@
 import { computed, ref, watch } from 'vue'
+import { api } from './api'
 
 const KEY = 'cart'
 const items = ref(load())
@@ -57,4 +58,16 @@ export const cart = {
   clear() {
     items.value = []
   }
+}
+
+// 把勾选的商品提交为订单，成功后从购物车移除
+export async function placeOrder() {
+  const picked = items.value.filter((i) => i.checked)
+  if (!picked.length) throw new Error('请先勾选商品')
+  const r = await api('/orders', {
+    method: 'POST',
+    body: JSON.stringify({ items: picked.map((i) => ({ id: i.id, qty: i.qty })) })
+  })
+  items.value = items.value.filter((i) => !i.checked)
+  return r
 }

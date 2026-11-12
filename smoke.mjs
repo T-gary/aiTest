@@ -41,6 +41,15 @@ assert(search.d.items.some(p => p.id === created.d.id), '按名称搜索命中')
 const denied = await j('/admin/stats', {}, user.d.token)
 assert(denied.status === 403, '普通账号不能查看板')
 
+const order = await post('/orders', { items: [{ id: created.d.id, qty: 2 }] }, user.d.token)
+assert(order.status === 200 && order.d.total === 39.98, '下单成功，金额以库里价格为准')
+
+const orders = await j('/orders', {}, user.d.token)
+assert(orders.d.items[0]?.id === order.d.id && orders.d.items[0].items[0].qty === 2, '订单列表回显明细')
+
+const orderNoAuth = await post('/orders', { items: [{ id: created.d.id, qty: 1 }] })
+assert(orderNoAuth.status === 401, '未登录不能下单')
+
 const del = await j(`/products/${created.d.id}`, { method: 'DELETE' }, user.d.token)
 assert(del.status === 200, '删除自己的商品')
 const del2 = await j(`/products/${created.d.id}`, { method: 'DELETE' }, admin.d.token)

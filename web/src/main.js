@@ -10,6 +10,7 @@ import Profile from './views/Profile.vue'
 import Category from './views/Category.vue'
 import Detail from './views/Detail.vue'
 import Cart from './views/Cart.vue'
+import Orders from './views/Orders.vue'
 import './style.css'
 
 const router = createRouter({
@@ -23,7 +24,8 @@ const router = createRouter({
     { path: '/profile', component: Profile },
     { path: '/category', component: Category },
     { path: '/product/:id', component: Detail },
-    { path: '/cart', component: Cart }
+    { path: '/cart', component: Cart },
+    { path: '/orders', component: Orders }
   ]
 })
 

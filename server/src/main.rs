@@ -345,6 +345,100 @@ async fn delete_product(
     Ok(Json(json!({ "ok": true })))
 }
 
+#[derive(Deserialize)]
+struct OrderItemInput {
+    id: i64,
+    qty: i64,
+}
+
+#[derive(Deserialize)]
+struct OrderInput {
+    items: Vec<OrderItemInput>,
+}
+
+async fn create_order(
+    State(a): State<App>,
+    headers: HeaderMap,
+    Json(o): Json<OrderInput>,
+) -> Ok<Json<serde_json::Value>> {
+    let c = claims(&a, &headers)?;
+    if o.items.is_empty() {
+        return Err(bad("没有选中商品"));
+    }
+    // 价格以库里的为准，不信任前端传的价格
+    let mut rows: Vec<(i64, String, i64, i64)> = Vec::with_capacity(o.items.len());
+    let mut total: i64 = 0;
+    for it in &o.items {
+        if it.qty < 1 || it.qty > 999 {
+            return Err(bad("数量需在 1-999 之间"));
+        }
+        let p: Option<(String, i64)> =
+            sqlx::query_as("SELECT name, price_cents FROM products WHERE id = ?")
+                .bind(it.id)
+                .fetch_optional(&a.db)
+                .await?;
+        let (name, price) = p.ok_or_else(|| bad("商品不存在"))?;
+        total += price * it.qty;
+        rows.push((it.id, name, price, it.qty));
+    }
+    let mut tx = a.db.begin().await?;
+    let oid = sqlx::query("INSERT INTO orders (user_id, total_cents) VALUES (?, ?)")
+        .bind(c.uid)
+        .bind(total)
+        .execute(&mut *tx)
+        .await?
+        .last_insert_id() as i64;
+    for (pid, name, price, qty) in rows {
+        sqlx::query(
+            "INSERT INTO order_items (order_id, product_id, name, price_cents, qty) VALUES (?, ?, ?, ?, ?)",
+        )
+        .bind(oid)
+        .bind(pid)
+        .bind(name)
+        .bind(price)
+        .bind(qty)
+        .execute(&mut *tx)
+        .await?;
+    }
+    tx.commit().await?;
+    Ok(Json(json!({ "ok": true, "id": oid, "total": total as f64 / 100.0 })))
+}
+
+async fn list_orders(State(a): State<App>, headers: HeaderMap) -> Ok<Json<serde_json::Value>> {
+    let c = claims(&a, &headers)?;
+    let head: Vec<(i64, i64, String, String)> = sqlx::query_as(
+        "SELECT id, total_cents, status, DATE_FORMAT(created_at, '%Y-%m-%d %H:%i')
+         FROM orders WHERE user_id = ? ORDER BY id DESC LIMIT 50",
+    )
+    .bind(c.uid)
+    .fetch_all(&a.db)
+    .await?;
+    let mut orders = Vec::with_capacity(head.len());
+    for (id, total, status, at) in head {
+        let rows: Vec<(String, i64, i64, Option<String>)> = sqlx::query_as(
+            "SELECT oi.name, oi.price_cents, oi.qty, p.image_url
+             FROM order_items oi LEFT JOIN products p ON p.id = oi.product_id
+             WHERE oi.order_id = ? ORDER BY oi.id",
+        )
+        .bind(id)
+        .fetch_all(&a.db)
+        .await?;
+        orders.push(json!({
+            "id": id,
+            "status": status,
+            "created_at": at,
+            "total": total as f64 / 100.0,
+            "items": rows.into_iter().map(|(n, p, q, img)| json!({
+                "name": n,
+                "price": p as f64 / 100.0,
+                "qty": q,
+                "image_url": img.unwrap_or_default(),
+            })).collect::<Vec<_>>(),
+        }));
+    }
+    Ok(Json(json!({ "items": orders })))
+}
+
 #[derive(Serialize)]
 struct Account {
     id: i64,
@@ -436,6 +530,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/products", get(list_products).post(create_product))
         .route("/categories", get(categories))
         .route("/products/{id}", get(get_product).delete(delete_product))
+        .route("/orders", get(list_orders).post(create_order))
         .route("/admin/stats", get(stats))
         .route("/admin/products/{id}/featured", post(toggle_featured))
         .route("/admin/accounts/{id}/approve", post(approve_account))
@@ -502,6 +597,33 @@ async fn migrate(db: &MySqlPool) -> Result<(), sqlx::Error> {
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             INDEX idx_user (user_id),
             CONSTRAINT fk_logs_user FOREIGN KEY (user_id) REFERENCES users(id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+    )
+    .execute(db)
+    .await?;
+    sqlx::query(
+        "CREATE TABLE IF NOT EXISTS orders (
+            id BIGINT PRIMARY KEY AUTO_INCREMENT,
+            user_id BIGINT NOT NULL,
+            total_cents BIGINT NOT NULL DEFAULT 0,
+            status VARCHAR(20) NOT NULL DEFAULT '待发货',
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_orders_user (user_id),
+            CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES users(id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+    )
+    .execute(db)
+    .await?;
+    sqlx::query(
+        "CREATE TABLE IF NOT EXISTS order_items (
+            id BIGINT PRIMARY KEY AUTO_INCREMENT,
+            order_id BIGINT NOT NULL,
+            product_id BIGINT NULL,
+            name VARCHAR(100) NOT NULL,
+            price_cents BIGINT NOT NULL,
+            qty INT NOT NULL,
+            INDEX idx_items_order (order_id),
+            CONSTRAINT fk_items_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
     )
     .execute(db)

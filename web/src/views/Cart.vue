@@ -1,13 +1,38 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { cart } from '../cart'
+import { useRouter } from 'vue-router'
+import { cart, placeOrder } from '../cart'
+import { auth } from '../api'
 
+const router = useRouter()
 const cfg = ref({ discount: 66.82 })
 
 const checkedCount = computed(() => cart.checkedCount.value)
 const checkedPieces = computed(() => cart.checkedPieces.value)
 const checkedTotal = computed(() => cart.checkedTotal.value)
 const totalAll = computed(() => cart.total.value)
+
+const busy = ref(false)
+const error = ref('')
+const done = ref(null)
+
+async function settle() {
+  if (!checkedCount.value || busy.value) return
+  if (!auth.token()) {
+    router.push({ path: '/login', query: { redirect: '/cart' } })
+    return
+  }
+  busy.value = true
+  error.value = ''
+  try {
+    done.value = await placeOrder()
+  } catch (e) {
+    error.value = e.message
+    if (!auth.token()) router.push({ path: '/login', query: { redirect: '/cart' } })
+  } finally {
+    busy.value = false
+  }
+}
 
 function removeChecked() {
   cart.items.value.filter((i) => i.checked).forEach((i) => cart.remove(i.id))
@@ -124,9 +149,22 @@ function clearAll() {
           <div class="dc-total">
             <span>合计：</span><b>¥{{ checkedTotal.toFixed(2) }}</b>
           </div>
-          <button class="dc-settle-btn" disabled title="演示项目，不支持下单支付">去结算（{{ checkedCount }}）</button>
+          <button
+            class="dc-settle-btn"
+            :disabled="!checkedCount || busy"
+            :title="checkedCount ? '' : '请先勾选商品'"
+            @click="settle"
+          >
+            {{ busy ? '提交中…' : `去结算（${checkedCount}）` }}
+          </button>
         </div>
       </footer>
+
+      <p v-if="error" class="error dc-foot-tip">{{ error }}</p>
+      <p v-if="done" class="notice dc-foot-tip">
+        下单成功，订单号 #{{ done.id }}，合计 ¥{{ done.total.toFixed(2) }}
+        <RouterLink to="/orders" class="link">查看订单</RouterLink>
+      </p>
     </template>
   </div>
 </template>
